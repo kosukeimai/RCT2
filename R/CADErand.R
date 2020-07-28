@@ -19,7 +19,7 @@
 #' @param individual  A binary variable with TRUE for  individual-weighted estimators and FALSE for cluster-weighted estimators.
 #' @return A list of class \code{CADErand} which contains the following items:
 #' \item{CADE1}{ The point estimate of CADE(1).  } \item{CADE0}{ The point estimate of CADE(0).  } 
-#'\item{CADE1}{ The point estimate of CASE(1).  } \item{CASE0}{ The point estimate of CASE(0).  } 
+#'\item{CASE1}{ The point estimate of CASE(1).  } \item{CASE0}{ The point estimate of CASE(0).  } 
 #'\item{var.CADE1}{ The  variance estimate of CADE(1).   } 
 #'\item{var.CADE0}{ The  variance estimate of CADE(0).   } 
 #'\item{var.CASE1}{ The  variance estimate of CASE(1).   } 
@@ -36,6 +36,8 @@
 #'\item{var.SEY0}{ The  variance estimate of SEY(0).   } 
 #'\item{var.SED1}{ The  variance estimate of SED(1).   } 
 #'\item{var.SED0}{ The  variance estimate of SED(0).   } 
+#'\item{NADE1}{ The point estimate of NADE(1).  } \item{NADE0}{ The point estimate of NADE(0).  }
+#'\item{NASE1}{ The poinst estimate of NASE(1).  } \item{NASE0}{ The point estimate of NADE(0).  }
 #' @author Kosuke Imai, Department of Politics, Princeton University
 #' \email{kimai@Princeton.Edu}, \url{https://imai.princeton.edu};
 #' Zhichao Jiang, Department of Politics, Princeton University
@@ -180,7 +182,7 @@ CADErand=function(data,individual=1){
   est.zetab0=est.zetab01/sum(A)+est.zetab00/sum(1-A)
   
   
-  #### CADE
+  #### CADE and CASE
   est.CADE1=est.DEY1/est.DED1
   est.CADE0=est.DEY0/est.DED0
   est.CASE1=est.SEY1/est.SED1
@@ -189,10 +191,28 @@ CADErand=function(data,individual=1){
   est.varCADE0=   (var.DEY0-2*est.CADE0*est.zeta0+est.CADE0^2*var.DED0)/est.DED0^2
   est.varCASE1=   (var.SEY1-2*est.CASE1*est.zetab1+est.CASE1^2*var.SED1)/est.SED1^2
   est.varCASE0=   (var.SEY0-2*est.CASE0*est.zetab0+est.CASE0^2*var.SED0)/est.SED0^2
+  
+  
+  ### NADE and NASE
+  pi.nc0=sum(sapply(Difflist(D, Z), function (x)sum(abs(x)))*(1-A))/sum(n*(1-A))
+  pi.nc1=sum(sapply(Difflist(D, Z), function (x)sum(abs(x)))*A)/sum(n*A)
+  pi.c0=1-pi.nc0
+  pi.c1=1-pi.nc1
+  lam.c0=sum(sapply(Difflist(D, A), function(x) 1-abs(x))*sapply(Z, function(x) 1-x))/N
+  lam.c1=sum(sapply(Difflist(D, A), function(x) 1-abs(x))*sapply(Z, function(x) x))/N
+  lam.nc0=1-lam.c0
+  lam.nc1=1-lam.c1
+  est.NADE0=(est.DEY0-pi.c0*est.CADE0)/pi.nc0
+  est.NADE1=(est.DEY1-pi.c1*est.CADE1)/pi.nc1
+  est.NASE0=(est.SEY0-est.CASE0*lam.c0)/lam.nc0
+  est.NASE1=(est.SEY1-est.CASE1*lam.c1)/lam.nc1
+  
+  
   return(list(CADE1=est.CADE1,CADE0=est.CADE0,CASE1=est.CASE1,CASE0=est.CASE0, var.CADE1=est.varCADE1,var.CADE0=est.varCADE0,var.CASE1=est.varCASE1,var.CASE0=est.varCASE0,
   DEY1=est.DEY1,DEY0=est.DEY0,DED1=est.DED1,DED0=est.DED0,
   var.DEY1=var.DEY1,var.DEY0=var.DEY0,var.DED1=var.DED1,var.DED0=var.DED0,
   SEY1=est.SEY1,SEY0=est.SEY0,SED1=est.SED1,SED0=est.SED0,
-  var.SEY1=var.SEY1,var.SEY0=var.SEY0,var.SED1=var.SED1,var.SED0=var.SED0
+  var.SEY1=var.SEY1,var.SEY0=var.SEY0,var.SED1=var.SED1,var.SED0=var.SED0,
+  NADE1=est.NADE1, NADE0=est.NADE0, NASE1=est.NASE1, NASE0=est.NASE0
   ))
 }
