@@ -43,7 +43,11 @@
 #' @export CADEreg
 
 
-CADEreg=function(data){
+CADEreg=function(data, ci.level=0.95){
+  ## validate ci.level
+  if(ci.level>1){stop('Please specify the confidence interval as a decimal between 0 and 1.')}
+  
+  
   ## transform the data into list 	
   if(!is.factor(data$id)){stop('The cluster_id should be a factor variable.')}
   cluster.id=unique(data$id)	
@@ -197,5 +201,14 @@ CADEreg=function(data){
   var0.reg=(J1/J)*var.cluster.hc2[4,4]+(1-J1/J)*var.ind[4,4]
   var1.hc2=var.hc2[3,3]
   var0.hc2=var.hc2[4,4]
+  
+  ## confidence intervals
+  ci.tail=(1-ci.level)/2
+  qnorm=qnorm(ci.level+ci.tail)
+  
+  est.CADE1.CI95=c(est.CADE1-qnorm*var1.reg, est.CADE1+qnorm*var1.reg)
+  est.CADE0.CI95=c(est.CADE1-qnorm*var0.reg, est.CADE1+qnorm*var0.reg)
+  
+  
   return(list(CADE1=est.CADE1,CADE0=est.CADE0, var1.clu=var1.cluster,var0.clu=var0.cluster,var1.clu.hc2=var1.cluster.hc2,var0.clu.hc2=var0.cluster.hc2,   var1.ind=var1.ind,var0.ind=var0.ind,var1.reg=var1.reg,var0.reg=var0.reg,var1.hc2=var1.hc2,var0.hc2=var0.hc2))
 }
