@@ -210,5 +210,17 @@ CADEreg=function(data, ci.level=0.95){
   est.CADE0.CI95=c(est.CADE1-qnorm*var0.reg, est.CADE1+qnorm*var0.reg)
   
   
-  return(list(CADE1=est.CADE1,CADE0=est.CADE0, var1.clu=var1.cluster,var0.clu=var0.cluster,var1.clu.hc2=var1.cluster.hc2,var0.clu.hc2=var0.cluster.hc2,   var1.ind=var1.ind,var0.ind=var0.ind,var1.reg=var1.reg,var0.reg=var0.reg,var1.hc2=var1.hc2,var0.hc2=var0.hc2))
+  return(list(CADE1=est.CADE1,CADE0=est.CADE0, var1.clu=var1.cluster,var0.clu=var0.cluster,var1.clu.hc2=var1.cluster.hc2,var0.clu.hc2=var0.cluster.hc2,   
+              var1.ind=var1.ind,var0.ind=var0.ind,var1.reg=var1.reg,var0.reg=var0.reg,var1.hc2=var1.hc2,var0.hc2=var0.hc2,
+              CADE1.CI=est.CADE1.CI95, CADE0.CI=est.CADE0.CI95))
 }
+
+
+
+
+
+
+
+
+
+

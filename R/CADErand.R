@@ -216,3 +216,4 @@ CADErand=function(data,individual=1){
   # NADE1=est.NADE1, NADE0=est.NADE0, NASE1=est.NASE1, NASE0=est.NASE0
   ))
 }
+

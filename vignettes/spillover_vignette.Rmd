@@ -33,6 +33,7 @@ data <- RCT2::data.hosp
 To run the CADErand command, simply type in the following:
 ```{r}
 rand <- CADErand(data)
+# rand
 ```
 
 Then, you will be able to access the output of the CADE randomization function including the CADE, CASE, ITT effects, and the variances of all of those things.

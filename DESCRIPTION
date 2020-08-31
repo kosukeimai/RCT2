@@ -12,4 +12,9 @@ Description: Provides various statistical methods for designing and analyzing tw
 License: MIT
 URL: https://github.com/kosukeimai/RCT2
 BugReports: https://github.com/kosukeimai/RCT2/issues
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
+Suggests: 
+    testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
