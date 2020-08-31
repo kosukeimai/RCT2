@@ -1,4 +1,44 @@
 
+###
+### Regression-based method for the ITT effects and the complier average direct effect/spillover effect
+### 
+###
+
+
+
+#' Regression-based method for the ITT effects and the complier average direct effect/spillover effect
+#'
+#' 
+#' This function computes the point estimates and variance estimates of the direct effect and spillover effect for ITT and CADE/CASE
+#'
+#' 
+#' For the details of the method implemented by this function, see the
+#' references.
+#' 
+#' @param data  A data frame containing the relevant variables. The names for the variables should be: ``Z'' for the treatment assignment,  ``D''  for the actual received treatment, ``Y'' for the outcome, ``A'' for the treatment assignment mechanism and ``id'' for the cluster ID. The variable for the cluster id should be a factor.
+#' @param individual  A binary variable with TRUE for  individual-weighted estimators and FALSE for cluster-weighted estimators.
+#' @return A list of class \code{CADErand} which contains the following items:
+#' \item{ITT.DE}{ Estimate of direct effect under ITT regresion. }\item{ITT.SE}{ Estimate of spillover effect under ITT regresion. }
+#' \item{ITT.DE.CI}{ Confidence itnerval of direct effect under ITT regresion. }
+#' \item{ITT.SE.CI}{ Confidence itnerval of spillover effect under ITT regresion. }
+#' \item{IV.DE}{ Estimate of direct effect under IV regresion. }\item{IV.SE}{ Estimate of spillover effect under IV regresion. }
+#' \item{IV.DE.CI}{ Confidence interval of direct effect under IV regresion. }
+#' \item{IV.SE.CI}{ Confidence interval of spillover effect under IV regresion. }
+#' \item{IV.DE.CI}{ Confidence interval of direct effect under IV regresion. }
+#' \item{ITT.tstat}{ t-stats from ITT regression. }\item{IV.tstat}{ t-stats from IV regression. }
+#' \item{ITT.pvals}{ p-values from ITT regression. }\item{IV.pvals}{ p-values from IV regression. }
+#' 
+#' @author Kosuke Imai, Department of Politics, Princeton University
+#' \email{kimai@Princeton.Edu}, \url{https://imai.princeton.edu};
+#' Zhichao Jiang, Department of Politics, Princeton University
+#' \email{zhichaoj@@princeton.edu}.
+#' @references Kosuke Imai, Zhichao Jiang and Anup Malani (2018).
+#' \dQuote{Causal Inference with Interference and Noncompliance in the Two-Stage Randomized Experiments}, \emph{Technical Report}. Department of Politics, Princeton
+#' University.
+#' @keywords two-stage randomized experiments
+#' @export CADEparamreg
+
+
 
 CADEparamreg=function(data, assign.prob, ci.level=0.95){
   ## validate ci.level
@@ -15,7 +55,7 @@ CADEparamreg=function(data, assign.prob, ci.level=0.95){
   for (i in 1:n.cluster){
     Z[[i]]=as.numeric(data$Z[data$id==cluster.id[i]])
     D[[i]]=as.numeric(data$D[data$id==cluster.id[i]])
-    Y[[i]]=data.hosp$Y[data$id==cluster.id[i]]
+    Y[[i]]=data$Y[data$id==cluster.id[i]]
     if (length(unique(data$A[data$id==cluster.id[i]]))!=1){
       stop( paste0('The assignment mechanism in cluster ',i,' should be the same.'))
     }
@@ -37,7 +77,7 @@ CADEparamreg=function(data, assign.prob, ci.level=0.95){
   data.ITT$A[data.ITT$A==1]=assign.prob
   data.ITT$A[data.ITT$A==0]=1-assign.prob
   lmITT=lm(Y~Z+A+Z:A, data=data.ITT)
-  var.lmITT=vcovHC(lmITT, type = "HC2", cluster = "id", adjust = T)
+  var.lmITT=sandwich::vcovHC(lmITT, type = "HC2", cluster = "id", adjust = T)
   matrix1=array(0,dim=c(4,4))
   matrix1[1,]=c(0,1,0,1)
   matrix1[2,2]=1
@@ -61,8 +101,8 @@ CADEparamreg=function(data, assign.prob, ci.level=0.95){
     data.iv$propD[data.iv$id==cluster.id[i]]= mean(data.iv$D[data.iv$id==cluster.id[i]])
   }
   
-  lmiv=  ivreg(Y~D+propD+D:propD | Z+A+Z:A,data=data.iv)
-  var.lmiv=vcovHC(lmiv, type = "HC2", cluster = "id", adjust = T)
+  lmiv=  AER::ivreg(Y~D+propD+D:propD | Z+A+Z:A,data=data.iv)
+  var.lmiv=sandwich::vcovHC(lmiv, type = "HC2", cluster = "id", adjust = T)
   
   effect.iv=as.numeric(matrix1%*%lmiv$coefficients)
   var.effect.iv=matrix1%*%var.lmiv%*%t(matrix1)
@@ -95,7 +135,7 @@ CADEparamreg=function(data, assign.prob, ci.level=0.95){
               ITT.SE.CI=list(c(ITT.LCI[3], ITT.RCI[3]), c(ITT.LCI[4], ITT.RCI[4])),
               IV.DE=IV.effect[c(1, 2)], IV.SE=IV.effect[c(3, 4)], IV.DE.CI=list(c(IV.LCI[1], IV.RCI[1]), c(IV.LCI[2], IV.RCI[2])),
               IV.SE.CI=list(c(IV.LCI[3], IV.RCI[3]), c(IV.LCI[4], IV.RCI[4])),
-              ITT.tstat=t.stat.ITT, ITT.pvals=p.vals.ITT, iv.tstat=t.stat.iv, iv.pvals=p.vals.iv))
+              ITT.tstat=t.stat.ITT, ITT.pvals=p.vals.ITT, IV.tstat=t.stat.iv, IV.pvals=p.vals.iv))
 }
 
 

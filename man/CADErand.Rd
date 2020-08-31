@@ -14,7 +14,7 @@ CADErand(data, individual = 1)
 \value{
 A list of class \code{CADErand} which contains the following items:
 \item{CADE1}{ The point estimate of CADE(1).  } \item{CADE0}{ The point estimate of CADE(0).  } 
-\item{CADE1}{ The point estimate of CASE(1).  } \item{CASE0}{ The point estimate of CASE(0).  } 
+\item{CASE1}{ The point estimate of CASE(1).  } \item{CASE0}{ The point estimate of CASE(0).  } 
 \item{var.CADE1}{ The  variance estimate of CADE(1).   } 
 \item{var.CADE0}{ The  variance estimate of CADE(0).   } 
 \item{var.CASE1}{ The  variance estimate of CASE(1).   } 
@@ -30,7 +30,9 @@ A list of class \code{CADErand} which contains the following items:
 \item{var.SEY1}{ The  variance estimate of SEY(1).   } 
 \item{var.SEY0}{ The  variance estimate of SEY(0).   } 
 \item{var.SED1}{ The  variance estimate of SED(1).   } 
-\item{var.SED0}{ The  variance estimate of SED(0).   }
+\item{var.SED0}{ The  variance estimate of SED(0).   } 
+\item{NADE1}{ The point estimate of NADE(1).  } \item{NADE0}{ The point estimate of NADE(0).  }
+\item{NASE1}{ The poinst estimate of NASE(1).  } \item{NASE0}{ The point estimate of NADE(0).  }
 }
 \description{
 This function computes the point estimates and variance estimates of the complier average direct effect (CADE)  and the complier average spillover effect (CASE).

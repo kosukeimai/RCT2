@@ -4,7 +4,7 @@
 \alias{CADEreg}
 \title{Regression-based method for the complier average direct effect}
 \usage{
-CADEreg(data)
+CADEreg(data, ci.level = 0.95)
 }
 \arguments{
 \item{data}{A data frame containing the relevant variables. The names for the variables should be: ``Z'' for the treatment assignment,  ``D''  for the actual received treatment, ``Y'' for the outcome, ``A'' for the treatment assignment mechanism and ``id'' for the cluster ID. The variable for the cluster id should be a factor.}
