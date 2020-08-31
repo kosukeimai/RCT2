@@ -1,0 +1,13 @@
+language: r
+cache: packages
+sudo: required
+
+r:
+  - oldrel
+  - release
+  - devel
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
