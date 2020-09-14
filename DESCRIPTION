@@ -21,4 +21,5 @@ VignetteBuilder: knitr
 Imports: 
     sandwich,
     AER,
-    stats
+    stats,
+    devtools
