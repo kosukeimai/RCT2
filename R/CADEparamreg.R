@@ -16,7 +16,8 @@
 #' references.
 #' 
 #' @param data  A data frame containing the relevant variables. The names for the variables should be: ``Z'' for the treatment assignment,  ``D''  for the actual received treatment, ``Y'' for the outcome, ``A'' for the treatment assignment mechanism and ``id'' for the cluster ID. The variable for the cluster id should be a factor.
-#' @param individual  A binary variable with TRUE for  individual-weighted estimators and FALSE for cluster-weighted estimators.
+#' @param assign.prob A double between 0 and 1 specifying the assignment probability to either assignment mechanism. 
+#' @param ci.level A double between 0 and 1 specifying the confidence interval level to be output. 
 #' @return A list of class \code{CADErand} which contains the following items:
 #' \item{ITT.DE}{ Estimate of direct effect under ITT regresion. }\item{ITT.SE}{ Estimate of spillover effect under ITT regresion. }
 #' \item{ITT.DE.CI}{ Confidence itnerval of direct effect under ITT regresion. }
@@ -131,11 +132,15 @@ CADEparamreg=function(data, assign.prob, ci.level=0.95){
   t.stat.iv=summary(lmiv)$coefficients[,3]
   p.vals.iv=2*pt(t.stat.iv, sum(n)-2, lower.tail = F)
   
-  return(list(ITT.DE=ITT.effect[c(1,2)], ITT.SE=ITT.effect[c(3,4)], ITT.DE.CI=list(c(ITT.LCI[1], ITT.RCI[1]), c(ITT.LCI[2], ITT.RCI[2])),
-              ITT.SE.CI=list(c(ITT.LCI[3], ITT.RCI[3]), c(ITT.LCI[4], ITT.RCI[4])),
-              IV.DE=IV.effect[c(1, 2)], IV.SE=IV.effect[c(3, 4)], IV.DE.CI=list(c(IV.LCI[1], IV.RCI[1]), c(IV.LCI[2], IV.RCI[2])),
-              IV.SE.CI=list(c(IV.LCI[3], IV.RCI[3]), c(IV.LCI[4], IV.RCI[4])),
-              ITT.tstat=t.stat.ITT, ITT.pvals=p.vals.ITT, IV.tstat=t.stat.iv, IV.pvals=p.vals.iv))
+  output = list(ITT.DE=ITT.effect[c(1,2)], ITT.SE=ITT.effect[c(3,4)], ITT.DE.CI=list(c(ITT.LCI[1], ITT.RCI[1]), c(ITT.LCI[2], ITT.RCI[2])),
+                ITT.SE.CI=list(c(ITT.LCI[3], ITT.RCI[3]), c(ITT.LCI[4], ITT.RCI[4])),
+                IV.DE=IV.effect[c(1, 2)], IV.SE=IV.effect[c(3, 4)], IV.DE.CI=list(c(IV.LCI[1], IV.RCI[1]), c(IV.LCI[2], IV.RCI[2])),
+                IV.SE.CI=list(c(IV.LCI[3], IV.RCI[3]), c(IV.LCI[4], IV.RCI[4])),
+                ITT.tstat=t.stat.ITT, ITT.pvals=p.vals.ITT, IV.tstat=t.stat.iv, IV.pvals=p.vals.iv)
+  
+  class(output) = "parametric"
+  
+  return(output)
 }
 
 

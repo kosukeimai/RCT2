@@ -9,7 +9,9 @@ CADEparamreg(data, assign.prob, ci.level = 0.95)
 \arguments{
 \item{data}{A data frame containing the relevant variables. The names for the variables should be: ``Z'' for the treatment assignment,  ``D''  for the actual received treatment, ``Y'' for the outcome, ``A'' for the treatment assignment mechanism and ``id'' for the cluster ID. The variable for the cluster id should be a factor.}
 
-\item{individual}{A binary variable with TRUE for  individual-weighted estimators and FALSE for cluster-weighted estimators.}
+\item{assign.prob}{A double between 0 and 1 specifying the assignment probability to either assignment mechanism.}
+
+\item{ci.level}{A double between 0 and 1 specifying the confidence interval level to be output.}
 }
 \value{
 A list of class \code{CADErand} which contains the following items:

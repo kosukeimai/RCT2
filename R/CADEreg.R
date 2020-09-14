@@ -21,7 +21,8 @@
 #' references.
 #' 
 #' @param data  A data frame containing the relevant variables. The names for the variables should be: ``Z'' for the treatment assignment,  ``D''  for the actual received treatment, ``Y'' for the outcome, ``A'' for the treatment assignment mechanism and ``id'' for the cluster ID. The variable for the cluster id should be a factor.
-#' @return A list of class \code{CADEreg} which contains the following items:
+#' @param ci.level A double between 0 and 1 specifying the confidence interval level to be output.
+#'  @return A list of class \code{CADEreg} which contains the following items:
 #' \item{CADE1}{ The point estimate of CADE(1).  } \item{CADE0}{ The point estimate of CADE(0).  } 
 #' \item{var1.clu}{ The cluster-robust variance of CADE(1).   } \item{var0.clu}{ The cluster-robust variance of CADE(0).  }
 #'\item{var1.clu.hc2}{ The cluster-robust HC2 variance of CADE(1).   } 
@@ -209,10 +210,12 @@ CADEreg=function(data, ci.level=0.95){
   est.CADE1.CI95=c(est.CADE1-qnorm*var1.reg, est.CADE1+qnorm*var1.reg)
   est.CADE0.CI95=c(est.CADE1-qnorm*var0.reg, est.CADE1+qnorm*var0.reg)
   
+  output = list(CADE1=est.CADE1,CADE0=est.CADE0, var1.clu=var1.cluster,var0.clu=var0.cluster,var1.clu.hc2=var1.cluster.hc2,var0.clu.hc2=var0.cluster.hc2,   
+                var1.ind=var1.ind,var0.ind=var0.ind,var1.reg=var1.reg,var0.reg=var0.reg,var1.hc2=var1.hc2,var0.hc2=var0.hc2,
+                CADE1.CI=est.CADE1.CI95, CADE0.CI=est.CADE0.CI95)
+  class(output) = "regression"
   
-  return(list(CADE1=est.CADE1,CADE0=est.CADE0, var1.clu=var1.cluster,var0.clu=var0.cluster,var1.clu.hc2=var1.cluster.hc2,var0.clu.hc2=var0.cluster.hc2,   
-              var1.ind=var1.ind,var0.ind=var0.ind,var1.reg=var1.reg,var0.reg=var0.reg,var1.hc2=var1.hc2,var0.hc2=var0.hc2,
-              CADE1.CI=est.CADE1.CI95, CADE0.CI=est.CADE0.CI95))
+  return(output)
 }
 
 

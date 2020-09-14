@@ -8,9 +8,9 @@ CADEreg(data, ci.level = 0.95)
 }
 \arguments{
 \item{data}{A data frame containing the relevant variables. The names for the variables should be: ``Z'' for the treatment assignment,  ``D''  for the actual received treatment, ``Y'' for the outcome, ``A'' for the treatment assignment mechanism and ``id'' for the cluster ID. The variable for the cluster id should be a factor.}
-}
-\value{
-A list of class \code{CADEreg} which contains the following items:
+
+\item{ci.level}{A double between 0 and 1 specifying the confidence interval level to be output.
+ @return A list of class \code{CADEreg} which contains the following items:
 \item{CADE1}{ The point estimate of CADE(1).  } \item{CADE0}{ The point estimate of CADE(0).  } 
 \item{var1.clu}{ The cluster-robust variance of CADE(1).   } \item{var0.clu}{ The cluster-robust variance of CADE(0).  }
 \item{var1.clu.hc2}{ The cluster-robust HC2 variance of CADE(1).   } 
@@ -20,7 +20,7 @@ A list of class \code{CADEreg} which contains the following items:
 \item{var1.ind}{ The  individual-robust variance of CADE(1).    } 
 \item{var0.ind}{ The  individual-robust variance of CADE(0).    } 
 \item{var1.reg}{ The  proposed variance of CADE(1).    } 
-\item{var0.reg}{ The  proposed variance of CADE(0).    }
+\item{var0.reg}{ The  proposed variance of CADE(0).    }}
 }
 \description{
 This function computes the point estimates of the complier average direct effect (CADE) and four
