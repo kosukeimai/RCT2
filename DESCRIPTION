@@ -20,4 +20,5 @@ Suggests:
 VignetteBuilder: knitr
 Imports: 
     sandwich,
-    AER
+    AER,
+    stats
