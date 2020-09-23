@@ -24,7 +24,6 @@
 #' \dQuote{Causal Inference with Interference and Noncompliance in the Two-Stage Randomized Experiments}, \emph{Technical Report}. Department of Politics, Princeton
 #' University.
 #' @keywords two-stage randomized experiments
-#' @export 
 
 
 printCADE <- function(x) UseMethod("printCADE")
@@ -35,7 +34,6 @@ printCADE <- function(x) UseMethod("printCADE")
 #'
 #' @rdname printCADE
 #' @method printCADE random
-#' @S3method printCADE random
 
 printCADE.random <- function(x){
   variance <- c(x$var.CADE1, x$var.CADE0, x$var.CASE1, x$var.CASE0,x$var.DEY1, x$var.DEY0, x$var.DED1, x$var.DED0, x$var.SEY1, x$var.SEY0, x$var.SED1, x$var.SED0)
@@ -50,7 +48,6 @@ printCADE.random <- function(x){
 #'
 #' @rdname printCADE
 #' @method printCADE regression
-#' @S3method printCADE regression
 
 
 printCADE.regression <- function(x){
@@ -75,7 +72,6 @@ printCADE.regression <- function(x){
 #'
 #' @rdname printCADE
 #' @method printCADE parametric
-#' @S3method printCADE parametric
 
 
 printCADE.parametric <- function(x){
