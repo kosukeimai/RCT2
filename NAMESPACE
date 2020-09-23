@@ -3,3 +3,4 @@
 export(CADEparamreg)
 export(CADErand)
 export(CADEreg)
+export(print)

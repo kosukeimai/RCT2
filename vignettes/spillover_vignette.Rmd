@@ -34,7 +34,7 @@ To run the CADErand command, simply type in the following:
 ```{r}
 data$id <- factor(data$id)
 rand <- CADErand(data)
-printCADE(rand)
+RCT2::print(rand)
 ```
 
 Then, you will be able to access the output of the CADE randomization function including the CADE, CASE, ITT effects, and the variances of all of those things.
@@ -48,7 +48,7 @@ rand$CADE0
 In order to analyze our data using a regression based method, we use the CADEreg function.
 ```{r}
 reg <- CADEreg(data, ci.level = 0.90)
-printCADE(reg)
+RCT2::print(reg)
 ```
 
 This gives us the point estimates of CADE1 and CADE0 and their confidence intervals, and various types of variances for the CADE1 and CADE0. We can again access these by using the dollar sign notation. Note that we can use the parameter \code{ci.level} to specify the confidence interval level (i.e. 95\%, 90\%).
@@ -62,7 +62,7 @@ reg$CADE0
 CADEparamreg offers a regression-based method for the computing the ITT effects and the average direct effects and spillover effects.
 ```{r}
 paramreg <- CADEparamreg(data, assign.prob = 0.8, ci.level = 0.95)
-printCADE(paramreg)[[1]]
+RCT2::print(paramreg)[[1]]
 ```
 
 Note how we use \code{assign.prob} to specify the assignment probability to the different assignment mechanisms. We also use \code{ci.level} again to specify the confidence intervals.

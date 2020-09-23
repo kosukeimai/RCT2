@@ -24,18 +24,16 @@
 #' \dQuote{Causal Inference with Interference and Noncompliance in the Two-Stage Randomized Experiments}, \emph{Technical Report}. Department of Politics, Princeton
 #' University.
 #' @keywords two-stage randomized experiments
-
-
-printCADE <- function(x) UseMethod("printCADE")
+#' @export
 
 
 
-#' @return \code{NULL}
-#'
-#' @rdname printCADE
-#' @method printCADE random
+print <- function(x) UseMethod("print")
 
-printCADE.random <- function(x){
+
+#' @rdname print
+#' @method print random
+print.random <- function(x){
   variance <- c(x$var.CADE1, x$var.CADE0, x$var.CASE1, x$var.CASE0,x$var.DEY1, x$var.DEY0, x$var.DED1, x$var.DED0, x$var.SEY1, x$var.SEY0, x$var.SED1, x$var.SED0)
   estimate <- c(x$CADE1, x$CADE0, x$CASE1, x$CASE0, x$DEY1, x$DEY0, x$DED1, x$DED0, x$SEY1, x$SEY0, x$SED1, x$SED0)
   name <- c("CADE1", "CADE0", "CASE1", "CASE0", "DEY1", "DEY0", "DED1", "DED0", "SEY1", "SEY0", "DED1", "DED0")
@@ -43,14 +41,9 @@ printCADE.random <- function(x){
   return(out)
 }
 
-
-#' @return \code{NULL}
-#'
-#' @rdname printCADE
-#' @method printCADE regression
-
-
-printCADE.regression <- function(x){
+#' @rdname print
+#' @method print regression
+print.regression <- function(x){
   CIs <- c(x$CADE1.CI, x$CADE0.CI)
   CADEs <- c(x$CADE1, x$CADE2)
   name <- c("CADE1", "CADE0")
@@ -68,13 +61,10 @@ printCADE.regression <- function(x){
   return(out)
 }
 
-#' @return \code{NULL}
-#'
-#' @rdname printCADE
-#' @method printCADE parametric
 
-
-printCADE.parametric <- function(x){
+#' @rdname print
+#' @method print parametric
+print.parametric <- function(x){
   names <- c("ITT DE", "IV DE", "ITT SE", "IV SE")
   effects <- rbind(x$ITT.DE, x$IV.DE, x$ITT.SE, x$IV.SE)
   CIs <- rbind(x$ITT.DE.CI, x$ITT.SE.CI, x$IV.DE.CI, x$IV.SE.CI)
@@ -85,5 +75,7 @@ printCADE.parametric <- function(x){
   out <- list(init, tstat_pvals)
   return(out)
 }
+
+
 
 
