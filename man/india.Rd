@@ -20,7 +20,7 @@ A data frame with columns:
 \url{https://doi.org/10.7910/DVN/N7D9LS}
 }
 \usage{
-india
+data(india)
 }
 \description{
 Replication Data for: Causal Inference with Interference and Noncompliance in Two-Stage Randomized Experiments.
