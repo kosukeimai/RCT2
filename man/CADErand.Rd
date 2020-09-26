@@ -48,10 +48,12 @@ Kosuke Imai, Zhichao Jiang and Anup Malani (2018).
 University.
 }
 \author{
-Kosuke Imai, Department of Politics, Princeton University
-\email{kimai@Princeton.Edu}, \url{https://imai.princeton.edu};
-Zhichao Jiang, Department of Politics, Princeton University
-\email{zhichaoj@princeton.edu}.
+Kosuke Imai, Department of Statistics, Harvard University
+\email{imai@harvard.edu}, \url{https://imai.fas.harvard.edu/};
+Zhichao Jiang, School of Public Health and Health Sciences, University of Massachusetts Amherst
+\email{zhichaojiang@umass.edu};
+Karissa Huang, Department of Statistics, Harvard College
+\email{krhuang@college.harvard.edu}
 }
 \keyword{experiments}
 \keyword{randomized}

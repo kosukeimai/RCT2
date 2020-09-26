@@ -29,10 +29,12 @@
 #' \item{ITT.tstat}{ t-stats from ITT regression. }\item{IV.tstat}{ t-stats from IV regression. }
 #' \item{ITT.pvals}{ p-values from ITT regression. }\item{IV.pvals}{ p-values from IV regression. }
 #' 
-#' @author Kosuke Imai, Department of Politics, Princeton University
-#' \email{kimai@Princeton.Edu}, \url{https://imai.princeton.edu};
-#' Zhichao Jiang, Department of Politics, Princeton University
-#' \email{zhichaoj@@princeton.edu}.
+#' @author Kosuke Imai, Department of Statistics, Harvard University
+#' \email{imai@harvard.edu}, \url{https://imai.fas.harvard.edu/};
+#' Zhichao Jiang, School of Public Health and Health Sciences, University of Massachusetts Amherst
+#' \email{zhichaojiang@umass.edu};
+#' Karissa Huang, Department of Statistics, Harvard College
+#' \email{krhuang@college.harvard.edu}
 #' @references Kosuke Imai, Zhichao Jiang and Anup Malani (2018).
 #' \dQuote{Causal Inference with Interference and Noncompliance in the Two-Stage Randomized Experiments}, \emph{Technical Report}. Department of Politics, Princeton
 #' University.
