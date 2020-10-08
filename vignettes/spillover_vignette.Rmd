@@ -20,23 +20,14 @@ The evaluation study is based on a total of 11089 above poverty line households 
 
 The households in the treatment group were given RSBY for free, whereas some households in the control group could buy RSBY for around INR 200. Upon being informed of the assignment treatment conditions, households were given the opportunities to enroll in RSBY from April to May, 2015. 18 months later the post-treatment survey was carried out, in which a variety of outcomes were measured.
 
+| Village-level arms |                    |           |         | Household-level arms |                  |   |   |
+|--------------------|--------------------|-----------|---------|----------------------|------------------|---|---|
+| Mechanisms         | Number of villages | Treatment | Control | Number of households | Enrollment rates |   |   |
+| High               | 219                | 80%       | 20%     | 5,714                | 67.0%            |   |   |
+| Low                | 216                | 40%       | 60%     | 5,373                | 46.2%            |   |   |
 
 # Data
-The data set is a subset of data from the randomized evaluation of the India's National Health Insurance Program (RSBY). The data initially contained six variables as listed below:
-
-`village_id`: the village id
-
-`DistrictId`: the district id
-
-`treat`: the treatment status
-
-`mech`: the treatment assignment mechanism
-
-`enrolled`: enrollment in RSBY
-
-`EXPhosp_1`: hospital expenditure.
-
-After processing the for the purposes of the package, there remain four variables of intrest which we remained for the purposes of analysis:
+The data set is a subset of data from the randomized evaluation of the India's National Health Insurance Program (RSBY). The data initially contained six variables as listed below and after processing the for the purposes of the package, there remain four variables of intrest which we remained for the purposes of analysis:
 
 `Z`: treatment status
 
@@ -71,11 +62,11 @@ data <- RCT2::india
 To run the CADErand command, simply type in the following:
 ```{r}
 data$id <- factor(data$id)
-rand <- CADErand(data)
+rand <- CADErand(data, 0.95)
 RCT2::print(rand)
 ```
 
-Then, you will be able to access the output of the CADE randomization function including the CADE, CASE, ITT effects, and the variances of all of those things.
+Note that you can specify the confidence interval level of your choosing with the paramter `ci` in the `CADErand` function. You will be able to access the output of the CADE randomization function using the print method:
 
 ```{r}
 rand$CADE1

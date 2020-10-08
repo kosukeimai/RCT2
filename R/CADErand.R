@@ -51,7 +51,7 @@
 #' @export CADErand
 
 
-CADErand=function(data,individual=1){
+CADErand=function(data,individual=1, ci = 0.95){
 	## transform the data into list 	
   if(!is.factor(data$id)){stop('The cluster_id should be a factor variable.')}
   cluster.id=unique(data$id)	
@@ -194,11 +194,69 @@ CADErand=function(data,individual=1){
   est.varCASE1=   (var.SEY1-2*est.CASE1*est.zetab1+est.CASE1^2*var.SED1)/est.SED1^2
   est.varCASE0=   (var.SEY0-2*est.CASE0*est.zetab0+est.CASE0^2*var.SED0)/est.SED0^2
   
+  
+  ### standard deviations
+  est.stdCADE1 = sqrt(est.varCADE1)
+  est.stdCADE0 = sqrt(est.varCADE0)
+  est.stdCASE1 = sqrt(est.varCASE1)
+  est.stdCASE0 = sqrt(est.varCASE0)
+  
+  std.DEY0 = sqrt(var.DEY0)
+  std.DEY1 = sqrt(var.DEY1)
+  std.SEY1 = sqrt(var.SEY1)
+  std.SEY0 = sqrt(var.SEY0)
+  
+  std.DED0 = sqrt(var.DED0)
+  std.DED1 = sqrt(var.DED1)
+  std.SED1 = sqrt(var.SED1)
+  std.SED0 = sqrt(var.SED0)
+  
+  ### right confidence intervals
+  level = qnorm((1-ci)/2, 0, 1)
+  rci.CADE1 = round(est.CADE1-level*est.stdCADE1, 3)
+  rci.CADE0 = round(est.CADE0-level*est.stdCADE0, 3)
+  rci.CASE1 = round(est.CASE1-level*est.stdCASE1, 3)
+  rci.CASE0 = round(est.CASE0-level*est.stdCASE0, 3)
+  
+  rci.DEY0 = round(est.DEY0-level*std.DEY0, 3)
+  rci.DEY1 = round(est.DEY1-level*std.DEY1, 3)
+  rci.SEY0 = round(est.SEY0-level*std.SEY0, 3)
+  rci.SEY1 = round(est.SEY1-level*std.SEY1, 3)
+  
+  rci.DED0 = round(est.DED0-level*std.DED0, 3)
+  rci.DED1 = round(est.DED1-level*std.DED1, 3)
+  rci.SED0 = round(est.SED0-level*std.SED0, 3)
+  rci.SED1 = round(est.SED1-level*std.SED1, 3)
+  
+  ### left confidence intervals
+  lci.CADE1 = round(est.CADE1+level*est.stdCADE1, 3)
+  lci.CADE0 = round(est.CADE0+level*est.stdCADE0, 3)
+  lci.CASE1 = round(est.CASE1+level*est.stdCASE1, 3)
+  lci.CASE0 = round(est.CASE0+level*est.stdCASE0, 3)
+  
+  lci.DEY0 = round(est.DEY0+level*std.DEY0, 3)
+  lci.DEY1 = round(est.DEY1+level*std.DEY1, 3)
+  lci.SEY0 = round(est.SEY0+level*std.SEY0, 3)
+  lci.SEY1 = round(est.SEY1+level*std.SEY1, 3)
+  
+  lci.DED0 = round(est.DED0+level*std.DED0, 3)
+  lci.DED1 = round(est.DED1+level*std.DED1, 3)
+  lci.SED0 = round(est.SED0+level*std.SED0, 3)
+  lci.SED1 = round(est.SED1+level*std.SED1, 3)
+  
+  
+  
   output = list(CADE1=est.CADE1,CADE0=est.CADE0,CASE1=est.CASE1,CASE0=est.CASE0, var.CADE1=est.varCADE1,var.CADE0=est.varCADE0,var.CASE1=est.varCASE1,var.CASE0=est.varCASE0,
                 DEY1=est.DEY1,DEY0=est.DEY0,DED1=est.DED1,DED0=est.DED0,
                 var.DEY1=var.DEY1,var.DEY0=var.DEY0,var.DED1=var.DED1,var.DED0=var.DED0,
                 SEY1=est.SEY1,SEY0=est.SEY0,SED1=est.SED1,SED0=est.SED0,
-                var.SEY1=var.SEY1,var.SEY0=var.SEY0,var.SED1=var.SED1,var.SED0=var.SED0  )
+                var.SEY1=var.SEY1,var.SEY0=var.SEY0,var.SED1=var.SED1,var.SED0=var.SED0, 
+                lci.CADE1 = lci.CADE1, lci.CADE0 = lci.CADE0, lci.CASE1 = lci.CASE1, lci.CASE0 = lci.CASE0,
+                lci.DEY0 = lci.DEY0, lci.DEY1 = lci.DEY1, lci.SEY0 = lci.SEY0, lci.SEY1 = lci.SEY1,
+                lci.DED0 = lci.DED0, lci.DED1 = lci.DED1, lci.SED0 = lci.SED0, lci.SED1 = lci.SED1,
+                rci.CADE1 = rci.CADE1, rci.CADE0 = rci.CADE0, rci.CASE1 = rci.CASE1, rci.CASE0 = rci.CASE0,
+                rci.DEY0 = rci.DEY0, rci.DEY1 = rci.DEY1, rci.SEY0 = rci.SEY0, rci.SEY1 = rci.SEY1,
+                rci.DED0 = rci.DED0, rci.DED1 = rci.DED1, rci.SED0 = rci.SED0, rci.SED1 = rci.SED1)
   
   class(output) = "random"
   
