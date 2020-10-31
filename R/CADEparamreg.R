@@ -39,6 +39,10 @@
 #' \dQuote{Causal Inference with Interference and Noncompliance in the Two-Stage Randomized Experiments}, \emph{Technical Report}. Department of Politics, Princeton
 #' University.
 #' @keywords two-stage randomized experiments
+#' @importFrom stats qnorm
+#' @importFrom stats lm
+#' @importFrom stats pt
+#' 
 #' @export CADEparamreg
 
 

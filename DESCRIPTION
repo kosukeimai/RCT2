@@ -8,7 +8,7 @@ Authors@R: c(person("Karissa", "Huang", email = "krhuang@college.harvard.edu", r
 Maintainer: Kosuke Imai <imai@harvard.edu>
 Depends: R (>= 3.1.0)
 Description: Provides various statistical methods for designing and analyzing two-stage randomized controlled trials.  Two-stage randomized controlled trials can be used to estimate spillover effects as well as direct treatment effects.
-License: MIT
+License: MIT + file LICENSE
 URL: https://github.com/kosukeimai/RCT2
 BugReports: https://github.com/kosukeimai/RCT2/issues
 RoxygenNote: 7.1.0
