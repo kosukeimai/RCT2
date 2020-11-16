@@ -14,7 +14,7 @@ CADEparamreg(data, assign.prob, ci.level = 0.95)
 \item{ci.level}{A double between 0 and 1 specifying the confidence interval level to be output.}
 }
 \value{
-A list of class \code{CADErand} which contains the following items:
+A list of class \code{CADEparamreg} which contains the following items:
 \item{ITT.DE}{ Estimate of direct effect under ITT regresion. }\item{ITT.SE}{ Estimate of spillover effect under ITT regresion. }
 \item{ITT.DE.CI}{ Confidence itnerval of direct effect under ITT regresion. }
 \item{ITT.SE.CI}{ Confidence itnerval of spillover effect under ITT regresion. }

@@ -1,3 +1,46 @@
+
+###
+### Hypothesis testing for three null hypotheses
+### 
+###
+
+
+
+#' Sample size calculations for 
+#'
+#' 
+#' This function tests the null hypotheses of no direct effect, no marginal direct effect, and no spillover effect.
+#' 
+#' For the details of the method implemented by this function, see the
+#' references.
+#' 
+#' @param data  A data frame containing the relevant variables. The names for the variables should be: ``Z'' for the treatment assignment,  ``D''  for the actual received treatment, ``Y'' for the outcome, ``A'' for the treatment assignment mechanism and ``id'' for the cluster ID. The variable for the cluster id should be a factor.
+#' @param effect Specify which null hypothesis to be tested. ``DE'' for direct effect, ``ME'' for marginal effect, and ``SE'' for spillover effect.
+#' @param alpha The level of significance at which the test is to be run (default is 0.05).
+#' @return A list of class \code{Test2SRE} which contains the following item:
+#' \item{rej}{ Rejection region for test conducted. }
+#'
+#' 
+#' 
+#' @author Kosuke Imai, Department of Statistics, Harvard University
+#' \email{imai@harvard.edu}, \url{https://imai.fas.harvard.edu/};
+#' Zhichao Jiang, School of Public Health and Health Sciences, University of Massachusetts Amherst
+#' \email{zhichaojiang@umass.edu};
+#' Karissa Huang, Department of Statistics, Harvard College
+#' \email{krhuang@college.harvard.edu}
+#' @references Zhichao Jiang, Kosuke Imai (2020).
+#' \dQuote{Statistical Inference and Power Analysis for Direct and Spillover Effects in Two-Stage Randomized Experiments}, \emph{Technical Report}.
+#' @keywords two-stage randomized experiments
+#' 
+#' 
+#' @export Test2SRE
+
+
+
+
+
+
+
 #######  Sample size formula
 #### Calculate s^2 in the paper
 library(stats)

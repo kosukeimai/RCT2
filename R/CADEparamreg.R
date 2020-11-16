@@ -18,7 +18,7 @@
 #' @param data  A data frame containing the relevant variables. The names for the variables should be: ``Z'' for the treatment assignment,  ``D''  for the actual received treatment, ``Y'' for the outcome, ``A'' for the treatment assignment mechanism and ``id'' for the cluster ID. The variable for the cluster id should be a factor.
 #' @param assign.prob A double between 0 and 1 specifying the assignment probability to either assignment mechanism. 
 #' @param ci.level A double between 0 and 1 specifying the confidence interval level to be output. 
-#' @return A list of class \code{CADErand} which contains the following items:
+#' @return A list of class \code{CADEparamreg} which contains the following items:
 #' \item{ITT.DE}{ Estimate of direct effect under ITT regresion. }\item{ITT.SE}{ Estimate of spillover effect under ITT regresion. }
 #' \item{ITT.DE.CI}{ Confidence itnerval of direct effect under ITT regresion. }
 #' \item{ITT.SE.CI}{ Confidence itnerval of spillover effect under ITT regresion. }

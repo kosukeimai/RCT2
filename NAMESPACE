@@ -3,6 +3,8 @@
 export(CADEparamreg)
 export(CADErand)
 export(CADEreg)
+export(CalAPO)
+export(Test2SRE)
 export(print)
 importFrom(stats,lm)
 importFrom(stats,pt)
