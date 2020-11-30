@@ -1,0 +1,29 @@
+---
+title: "Statistical Inference and Power Analysis for Direct and Spillover Effects"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{interference_vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette addresses the usage of the functions involved in statistical inference and power analysis for the direct and spillover effects in two-stage randomized experiments motivated by the JD data set.
+
+## Study Design
+In 2007, the ministry in charge of employment in France launched a public employment integration service contract for young graduates seeking employment. A randomized experiment of this job placement assistance program was conducted and the methods in this package can be used to analyze the data. The following examples focus on two specific outcomes: fixed-term contract of six months or more (LTFC) and permanent contract (PC).
+
+## Data
+
+
+
+
+```{r setup}
+# library(RCT2)
+```

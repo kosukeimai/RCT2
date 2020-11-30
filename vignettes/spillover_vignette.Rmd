@@ -7,13 +7,13 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# RCT2 
+## RCT2 
 This package provides various statistical methods for designing and analyzing two-stage randomized controlled trials. Two-stage randomized controlled trials can be used to estimate spillover effects as well as direct treatment effects.
 
-# Motivation
+## Motivation
 The methods in this package address situations were some control units decide to take the treatment while others in the treatment group refuse to receive one. Often, researchers cannot force experimental subjects to adhere to protocol and the methods in this package allow analysis of two-stage randomized experiments with both interference and noncompliance. 
 
-# Study Design
+## Study Design
 RSBY provides access to an insurance plan that covers all pre-existing diseases and there is no age limit of the beneficiaries. The data was collected through a randomized trial to determine whether RSBY increases access to hospitalization (and health) and reduces impoverishment due to high medical expenses. The Indian governemtn announced a new scheme to build on RSBY and provide coverage for almost 500 million Indians, but has not yet decided its design or how much to fund it. Spillover effects are of concern because formal insurance may crow our informal insurance; the enrollment in RSBY by one household may depend on the treatment assignment of other households. Additionally, we must address noncompliance because some households in the treatment group decided not to enroll in RSBY while some in the control group were able to join the insurance program. 
 
 The evaluation study is based on a total of 11089 above poverty line households in two districts of Karnataka State with no pre-existing health insurance coverage living within 25 km of a RSY empaneled hospital. A two-stage randomzied design was employed to study both direct and spillover over effects of RSBY. In the first stage, 219 randomly selected villages were assigned to the "High" treatment assignment mechanism and the rest were assigned to the "Low" treatment assignment mechanism. In the second stage, 80% of the households in the "High" assignment mechanism within a cluster were completely randomly assigned to the treatment condition, while the rest of the households were assigned to the control group. In contrast, under the "Low" assignment mechanism, 40% of the households within a cluster were completely randomly assigned to the treatment condition. 
@@ -26,7 +26,7 @@ The households in the treatment group were given RSBY for free, whereas some hou
 | High               | 219                | 80%       | 20%     | 5,714                | 67.0%            |   |   |
 | Low                | 216                | 40%       | 60%     | 5,373                | 46.2%            |   |   |
 
-# Data
+## Data
 The data set is a subset of data from the randomized evaluation of the India's National Health Insurance Program (RSBY). The data initially contained six variables as listed below and after processing the for the purposes of the package, there remain four variables of intrest which we remained for the purposes of analysis:
 
 `Z`: treatment status
@@ -39,7 +39,7 @@ The data set is a subset of data from the randomized evaluation of the India's N
 
 
 
-# Overview
+## Overview
 There are three functions in this package:
 
 1. `CADErand`: computes the point estimates and variance estimates of the complier average direct effect (CADE) and the complier average spillover effect (CASE). The estimators calculated using this function are either individual weighted or cluster-weighted. The point estimates and variances of ITT effects are also included.
@@ -48,7 +48,7 @@ There are three functions in this package:
 
 3. `CADEparamreg`: computes the point estimates of the complier average direct effect (CADE) and the complier average spillover effect (CASE) following the model-based approach presented in the appendix.
 
-# Functions
+## Functions
 Before we begin, lets load the library and our example data set into R.
 
 ```{r, include=FALSE}
@@ -58,7 +58,7 @@ data <- RCT2::india
 ```
 
 
-## CADErand
+### CADErand
 To run the CADErand command, simply type in the following:
 ```{r}
 data$id <- factor(data$id)
@@ -73,7 +73,7 @@ rand$CADE1
 rand$CADE0
 ```
 
-## CADEreg
+### CADEreg
 In order to analyze our data using a regression based method, we use the CADEreg function.
 ```{r}
 reg <- CADEreg(data, ci.level = 0.90)
@@ -87,7 +87,7 @@ reg$CADE0
 ```
 
 
-## CADEparamreg
+### CADEparamreg
 CADEparamreg offers a regression-based method for the computing the ITT effects and the average direct effects and spillover effects.
 ```{r}
 paramreg <- CADEparamreg(data, assign.prob = 0.8, ci.level = 0.95)
