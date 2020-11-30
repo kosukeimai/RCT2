@@ -108,15 +108,15 @@ test <- RCT2::CalAPO(Z,A,Y.LTFC)
 
 
 ### Test2SRE
-We can also perform hypothesis tests on this data by using the `Test2SRE` function.
+We can also perform hypothesis tests on this data by using the `Test2SRE` function. THE `Test2SRE` function takes in `Z`, `A`, `Y`, as before, and also takes in an extra argument `effect`, where the desired effect should be specified (either ADE for direct effect, MDE for marginal direct effect, or ASE for spillover effect).
 
 ```{r}
 RCT2::Test2SRE(Z,A,Y.LTFC,effect="MDE")
 ```
 
 ### Calsamplesize
-Lastly, we can perform sample size calculations for the sample size needed for a given power at a given significance level.
-```{r, include=FALSE}
+Lastly, we can perform sample size calculations for the sample size needed for a given power at a given significance level. First, we implement a function which calculates the necessary parameters for the sample size calculation for this specific data.
+```{r}
 Calpara <- function(Z,A,Y){
   # number of clusters
   n.lea <- length(A)
@@ -162,7 +162,7 @@ return(list(sigmaw = sigmaw,sigmab = sigmab,r=sigmab/(sigmab+sigmaw), n.avg = me
 ```
 
 
-
+Then, we specify the effect size and use the `Calsamplesize` function to calculate the appropriate sample sizes for the permanent contract and the LTFC.
 ```{r}
 ### effect size
 mu <- 0.05

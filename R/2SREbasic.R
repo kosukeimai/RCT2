@@ -62,3 +62,46 @@ quadprogSE = function(D.se){
   return(min)
 }
 
+
+Calpara <- function(Z,A,Y){
+  # number of clusters
+  n.lea <- length(A)
+  
+  est.Yj <-  array(dim=c(n.lea,2))
+  est.sigmaj <- array(dim=c(n.lea,2))
+  
+  for (j in 1:n.lea){
+    Z.sub <-  Z[[j]]
+    Y.sub <-  Y[[j]]
+    n1.sub <- sum(Z.sub)
+    n0.sub <- sum(1-Z.sub)
+    est.Yj[j,2] <- sum(Z.sub*Y.sub)/n1.sub
+    est.Yj[j,1] <- sum((1-Z.sub)*Y.sub)/n0.sub
+    est.sigmaj [j,2] <-   sum( (Y.sub-est.Yj[j,2])^2*Z.sub)/(n1.sub-1)
+    est.sigmaj [j,1] <-   sum( (Y.sub-est.Yj[j,1])^2*(1-Z.sub))/(n0.sub-1)
+  }
+  
+  Ja <- table(A)
+  
+  sigmab1 <- rep(-1,3)
+  sigmab0 <- rep(-1,3)
+  est.Y1 <-  rep(-1,3)
+  est.Y0 <-  rep(-1,3)
+  
+  for ( a in 1:3){
+    est.Y1[a] <- sum(est.Yj[,2]*(A==a))/Ja[a]
+    sigmab1[a] <-     sum((est.Yj[,2]-est.Y1[a])^2*(A==a))/(Ja[a]-1)
+    est.Y0[a] <- sum(est.Yj[,1]*(A==a))/Ja[a]
+    sigmab0[a] <-     sum((est.Yj[,1]-est.Y0[a])^2*(A==a))/(Ja[a]-1)
+  }
+  
+  n1 <- sapply(Z,sum)
+  n <- sapply(Z,length)
+  
+  
+  sigmaw <- mean(est.sigmaj)
+  sigmab <- mean(c(sigmab1,sigmab0))- mean(1/n1-1/n)* sigmaw
+  
+  return(list(sigmaw = sigmaw,sigmab = sigmab,r=sigmab/(sigmab+sigmaw), n.avg = mean(n)))
+  
+}
