@@ -66,72 +66,33 @@ CalAPO <- function (Z, A, Y){
   }
   
   
-  ###  estiamted APO   (Y(1,1),Y(0,1)...,Y(1,m),Y(0,m))
+  ###  estimated APO   (Y(1,1),Y(0,1)...,Y(1,m),Y(0,m))
   Y.hat <-  rep(0,2*m)
   for (a in 1:m){
     Y.hat[2*a-1] <-  sum(Y1j.hat* (A==a))/Ja[a]
     Y.hat[2*a] <-  sum(Y0j.hat* (A==a))/Ja[a]
   }
   
-  ### estimated ADE
-  C1 <- matrix(data = NA, nrow = m, ncol = 2*m)
-  for (i in 1:m){
-    ind <- 2*i-1
-    eind <- get_unit_vec(ind, 2*m)
-    eindplus1 <- get_unit_vec(ind + 1, 2*m)
-    C1[i, ] <- eind-eindplus1
-  }
-  C1 <- t(C1)
+  ## contrast matrix
+  m=3
+  qa <- rep(1/3,3)
+  C1 = array(0,dim=c(m,2*m))
+  C2 = rep(0,2*m)
   
-  ADE <- C1%*%Y.hat
-  
-  ### estimated MDE
-  C2 <- rep(0, 2*m)
-  j <- 1
-  for (i in 1:(2*m)){
-    
-    if(i %% 2 == 1){
-      C2[i] <- Ja[j]
-      j <- j+1
-    }else if(i%%2 == 0){
-      C2[i] <- -C2[i-1]
-    }
-
+  for (a in 1:m){
+    C1[a,2*a-1] = 1
+    C1[a,2*a] = -1
+    C2[2*a-1] = qa[a]
+    C2[2*a] = -qa[a]
   }
   
-  MDE <- C2/J*Y.hat
-  
-  ### estimated ASE
-  C3 <- matrix(0, nrow = 2*m-2, ncol = 2*m)
-  for(i in 1:(2*m-2)){
-    if(i%%2 == 1){
-      C3[i, ] <- get_unit_vec(i, 2*m)-get_unit_vec(i+2, 2*m)
-    }else if(i%%2 == 0){
-      C3[i, ] <- get_unit_vec(i, 2*m)-get_unit_vec(i+2, 2*m)
-    }
+  C3 = array(0,dim=c(2*m-2,2*m))
+  for ( a in 1:(m-1)){
+    C3[a,2*a-1]=1
+    C3[a,2*a+1]=-1
+    C3[m-1+a,2*a]=1
+    C3[m-1+a,2*a+2]=-1
   }
-  C30 <- matrix(0, nrow = m-1, ncol = 2*m)
-  C31 <- matrix(0, nrow = m-1, ncol = 2*m)
-  j <- 1 
-  for(i in 1:(2*m-2)){
-    
-    if(i%%2 == 1){
-      C30[j, ] <- C3[i,]
-      j <- j+1
-    }
-  }
-  k <- 1
-  for(i in 1:(2*m-2)){
-    if(i%%2 == 0){
-      C31[k, ] <- C3[i,]
-      k <- k+1
-    }
-  }
-  
-  C3 <- rbind(C30, C31)
-  ASE <- C3 %*% Y.hat
-  
-  
   
   ## covariance matrix est
   cov.hat <-  array(0,dim=c(2*m,2*m))
@@ -144,10 +105,15 @@ CalAPO <- function (Z, A, Y){
     cov.hat[2*a-1,2*a] <- cov.hat[2*a,2*a-1]
   }
   
+  ### point estimations for ADE, MDE, ASE
+  ADE <- C1%*%Y.hat
+  MDE <- C2%*%Y.hat
+  ASE <- C3%*%Y.hat
+  
   ### covariance matrix of ADE, MDE, ASE
   hat.D <- cov.hat*J
   var.hat.ADE <- C1%*%hat.D%*%t(C1)/J
-  var.hat.MDE <- C2%*%hat.D%*%t(C2)/J
+  var.hat.MDE <- t(C2)%*%hat.D%*%C2/J
   var.hat.ASE <- C3%*%hat.D%*%t(C3)/J
   
   return(list(Y.hat=Y.hat, ADE.est = ADE, MDE.est = MDE, ASE.est = ASE, cov.hat = cov.hat, var.hat.ADE = var.hat.ADE, var.hat.MDE = var.hat.MDE, var.hat.ASE = var.hat.ASE))

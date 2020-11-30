@@ -14,7 +14,9 @@
 #' For the details of the method implemented by this function, see the
 #' references.
 #' 
-#' @param data  A data frame containing the relevant variables. The names for the variables should be: ``Z'' for the treatment assignment,  ``D''  for the actual received treatment, ``Y'' for the outcome, ``A'' for the treatment assignment mechanism and ``id'' for the cluster ID. The variable for the cluster id should be a factor.
+#' @param Z A vector of the treatment assignments.
+#' @param A A vector of treatment assignment mechanisms. 
+#' @param Y A vector of potential outcomes.
 #' @param effect Specify which null hypothesis to be tested. ``DE'' for direct effect, ``ME'' for marginal effect, and ``SE'' for spillover effect.
 #' @param alpha The level of significance at which the test is to be run (default is 0.05).
 #' @return A list of class \code{Test2SRE} which contains the following item:
@@ -37,22 +39,8 @@
 
 
 ### Testing the hypotheses of DE=0,MDE=0, SE=0 
-Test2SRE <- function(data,effect = "DE", alpha = 0.05){
-  ### read in and format the data
-  cluster.id=unique(data$id)	
-  n.cluster=length(cluster.id)	
-  Z=vector("list", n.cluster) 	
-  Y=vector("list", n.cluster)
-  A=rep(0,n.cluster)
-  for (i in 1:n.cluster){
-    Z[[i]]=as.numeric(data$Z[data$id==cluster.id[i]])
-    Y[[i]]=data$Y[data$id==cluster.id[i]]
-    if (length(unique(data$A[data$id==cluster.id[i]]))!=1){
-      stop( paste0('The assignment mechanism in cluster ',i,' should be the same.'))
-    }
-    A[i]=data$A[data$id==cluster.id[i]][1]
-  }
-  
+Test2SRE <- function(Z, A, Y,effect = "DE", alpha = 0.05){
+  ### format the data
   Ja <- table(A)
   J <- sum(Ja)
   qa <- Ja/J

@@ -27,7 +27,7 @@ The households in the treatment group were given RSBY for free, whereas some hou
 | Low                | 216                | 40%       | 60%     | 5,373                | 46.2%            |   |   |
 
 ## Data
-The data set is a subset of data from the randomized evaluation of the India's National Health Insurance Program (RSBY). The data initially contained six variables as listed below and after processing the for the purposes of the package, there remain four variables of intrest which we remained for the purposes of analysis:
+The data set is a subset of data from the randomized evaluation of the India's National Health Insurance Program (RSBY). The data initially contained six variables as listed below and after processing the for the purposes of the package, there remain four variables of interest which we remained for the purposes of analysis:
 
 `Z`: treatment status
 
@@ -53,6 +53,10 @@ Before we begin, lets load the library and our example data set into R.
 
 ```{r, include=FALSE}
 devtools::load_all(".")
+```
+
+
+```{r}
 library(RCT2)
 data <- RCT2::india
 ```

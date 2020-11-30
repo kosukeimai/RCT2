@@ -6,7 +6,7 @@
 
 
 
-#' Sample size calculations for detecting a specific alterantive 
+#' Sample size calculations for detecting a specific alternative 
 #' 
 #' This function calculates the sample size needed to detect a specific alternative hypothesis with a given power at a given significance level.
 #' For the details of the method implemented by this function, see the

@@ -2,7 +2,7 @@
 % Please edit documentation in R/sampleSRE.R
 \name{Calsamplesize}
 \alias{Calsamplesize}
-\title{Sample size calculations for detecting a specific alterantive}
+\title{Sample size calculations for detecting a specific alternative}
 \usage{
 Calsamplesize(mu, n, qa, pa, r, sigma = 1, alpha = 0.05, beta = 0.2)
 }

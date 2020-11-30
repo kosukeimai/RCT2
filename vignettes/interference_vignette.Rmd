@@ -20,10 +20,168 @@ This vignette addresses the usage of the functions involved in statistical infer
 In 2007, the ministry in charge of employment in France launched a public employment integration service contract for young graduates seeking employment. A randomized experiment of this job placement assistance program was conducted and the methods in this package can be used to analyze the data. The following examples focus on two specific outcomes: fixed-term contract of six months or more (LTFC) and permanent contract (PC).
 
 ## Data
+The data set is a subset of the original JD data set and includes the following variables:
 
+`anonale`: local employment agency
 
+`tempsc_av`: full-time work (at time of assignment)
 
+`assigned`: 1 if the individual is assigned to treatment, 0 otherwise
 
-```{r setup}
-# library(RCT2)
+`pct0`: share of the local population treated
+
+`cdi`: binary variable for whether the individual works on a permanent contract, 8 months after the assignment
+
+`cdd6m`: binary variable for whether the individual works in CDD (LTFC-time contract) for more than 6 months, 8 months after the assignment
+
+`emploidur`: binary variable for whether the individual works on a permanent or LTFC-term contract for more than 6 months, 8 months after the assignment
+
+`tempsc`: binary variable for whether the individual works full time, 8 months after the assignment
+
+`salaire`: individual's salary in Euros.
+
+## Overview
+The relevant functions for this analysis are the following:
+
+1. `CalAPO`: returns a list of point estimates and variances for the average potential outcomes, unit level direct effect, marginal direct effect, and unit level spillover effect.
+
+2. `Test2SRE`: returns the rejection region for the desired test. This function takes in the data, the effect tye (i.e. direct effect, marginal direct effect, or spillover effect) and outputs the rejection region at the desired significance level.
+
+3. `Calsamplesize`: returns a list of the calculated necessary sample sizes in order to achieve a given power level at a given significance level for the three types of effects.
+
+## Functions
+First, import the RCT2 library and load the relevant data set.
+```{r, include=FALSE}
+devtools::load_all(".")
 ```
+
+
+```{r}
+library(RCT2)
+data <- RCT2::jd
+```
+
+### CalAPO
+In order to calculate a list of point estimates and variances for an effect of interest, run the CalAPO command. It is necessary first to extract the necessary vectors from the data.
+
+```{r}
+#Change the data format to vectors of lists
+lea.label <- unique(data$anonale) 
+## total number of clusters
+ n.lea <- length(lea.label)
+ Z <- vector("list", n.lea)
+ Y.salary <- vector("list", n.lea) 
+ Y.LTFC <- vector("list", n.lea) 
+ Y.LT <- vector("list", n.lea) 
+ Y.perm <- vector("list", n.lea) 
+ A <- numeric(n.lea)
+ for ( i in 1:n.lea){
+   Z[[i]] <- data$assigned[data$anonale == lea.label[i]]
+   
+   ## salary    0  for unemployed
+   Y.salary[[i]] <- data$salaire[data$anonale == lea.label[i]]
+   Y.salary[[i]] <- ifelse(is.na(Y.salary[[i]]),0,Y.salary[[i]])
+   
+   ## LTFC or permanent contract
+   Y.LT[[i]] <- data$emploidur[data$anonale == lea.label[i]]
+   ## long-term fixed contract
+   Y.LTFC[[i]] <- data$cdd6m[data$anonale == lea.label[i]]
+   ## permanent contract
+   Y.perm[[i]] <- data$cdi[data$anonale == lea.label[i]]
+ }
+ 
+ 
+ ## treatment assignment mechanism
+ for (i in 1:n.lea){
+   if (  data$pct0[data$anonale==lea.label[i]][1]== 0.25){A[i] <- 1}
+   if (  data$pct0[data$anonale==lea.label[i]][1]== 0.5){A[i] <- 2}
+   if (  data$pct0[data$anonale==lea.label[i]][1]== 0.75){A[i] <- 3}
+ }
+```
+
+
+The above code extracts `Z`, the vector of treatment assignments, `A`, the vector of treatment assignment mechanisms and `Y.perm`, the vector of potential outcomes for the variable of interest. In this case, we are interested in long-term fixed contracts, and permanent contracts.
+
+```{r}
+test <- RCT2::CalAPO(Z,A,Y.LTFC)
+```
+
+
+### Test2SRE
+We can also perform hypothesis tests on this data by using the `Test2SRE` function.
+
+```{r}
+RCT2::Test2SRE(Z,A,Y.LTFC,effect="MDE")
+```
+
+### Calsamplesize
+Lastly, we can perform sample size calculations for the sample size needed for a given power at a given significance level.
+```{r, include=FALSE}
+Calpara <- function(Z,A,Y){
+  # number of clusters
+  n.lea <- length(A)
+
+est.Yj <-  array(dim=c(n.lea,2))
+est.sigmaj <- array(dim=c(n.lea,2))
+
+for (j in 1:n.lea){
+  Z.sub <-  Z[[j]]
+  Y.sub <-  Y[[j]]
+  n1.sub <- sum(Z.sub)
+  n0.sub <- sum(1-Z.sub)
+  est.Yj[j,2] <- sum(Z.sub*Y.sub)/n1.sub
+  est.Yj[j,1] <- sum((1-Z.sub)*Y.sub)/n0.sub
+  est.sigmaj [j,2] <-   sum( (Y.sub-est.Yj[j,2])^2*Z.sub)/(n1.sub-1)
+  est.sigmaj [j,1] <-   sum( (Y.sub-est.Yj[j,1])^2*(1-Z.sub))/(n0.sub-1)
+}
+
+Ja <- table(A)
+
+sigmab1 <- rep(-1,3)
+sigmab0 <- rep(-1,3)
+est.Y1 <-  rep(-1,3)
+est.Y0 <-  rep(-1,3)
+
+for ( a in 1:3){
+  est.Y1[a] <- sum(est.Yj[,2]*(A==a))/Ja[a]
+  sigmab1[a] <-     sum((est.Yj[,2]-est.Y1[a])^2*(A==a))/(Ja[a]-1)
+  est.Y0[a] <- sum(est.Yj[,1]*(A==a))/Ja[a]
+  sigmab0[a] <-     sum((est.Yj[,1]-est.Y0[a])^2*(A==a))/(Ja[a]-1)
+}
+
+n1 <- sapply(Z,sum)
+n <- sapply(Z,length)
+
+
+sigmaw <- mean(est.sigmaj)
+sigmab <- mean(c(sigmab1,sigmab0))- mean(1/n1-1/n)* sigmaw
+
+return(list(sigmaw = sigmaw,sigmab = sigmab,r=sigmab/(sigmab+sigmaw), n.avg = mean(n)))
+
+}
+```
+
+
+
+```{r}
+### effect size
+mu <- 0.05
+pa <- c( 0.25,0.50, 0.75)
+qa <- rep(1/3,3)
+
+
+var.perm <- Calpara(Z,A,Y.perm)
+var.perm$sigmab / (var.perm$sigmab+var.perm$sigmaw)
+n.avg <- round(var.perm$n)
+
+sigma.perm <- var.perm$sigmab+var.perm$sigmaw
+
+round(RCT2::Calsamplesize(0.03,n.avg,qa, pa, r=var.perm$r, sigma.perm, alpha=0.05, beta=0.2))
+
+var.LTFC <- Calpara(Z,A,Y.LTFC)
+var.LTFC$sigmab / (var.LTFC$sigmab+var.LTFC$sigmaw)
+sigma.LTFC <- var.LTFC$sigmab+var.LTFC$sigmaw
+
+round(RCT2::Calsamplesize(0.03,n.avg,qa, pa, r=var.LTFC$r, sigma.LTFC, alpha=0.05, beta=0.2))
+```
+
