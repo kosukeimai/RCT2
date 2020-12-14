@@ -35,12 +35,19 @@
 #' @references Zhichao Jiang, Kosuke Imai (2020).
 #' \dQuote{Statistical Inference and Power Analysis for Direct and Spillover Effects in Two-Stage Randomized Experiments}, \emph{Technical Report}.
 #' @keywords two-stage randomized experiments
-#' @name Calsamplesize
+#' @name calsamplesize
 #' @import stats
 #' @import quadprog
 #' 
 #' 
 #' @export Calsamplesize
+#' 
+
+
+
+
+
+
 
 Calsamplesize = function (mu,n,qa, pa, r, sigma=1, alpha=0.05, beta=0.2){  
   m <-  length(qa)  

@@ -45,9 +45,12 @@ The relevant functions for this analysis are the following:
 
 1. `CalAPO`: returns a list of point estimates and variances for the average potential outcomes, unit level direct effect, marginal direct effect, and unit level spillover effect.
 
-2. `Test2SRE`: returns the rejection region for the desired test. This function takes in the data, the effect tye (i.e. direct effect, marginal direct effect, or spillover effect) and outputs the rejection region at the desired significance level.
+2. `Test2SRE`: returns the rejection region for the desired test. This function takes in the data, the effect type (i.e. direct effect, marginal direct effect, or spillover effect) and outputs the rejection region at the desired significance level.
 
-3. `Calsamplesize`: returns a list of the calculated necessary sample sizes in order to achieve a given power level at a given significance level for the three types of effects.
+3. `calpara`: returns a list of the estimated within-cluster variance, between cluster variance, intraclass correlation coefficient, and average of the assignment vector which are necessary for the `Clsamplesize` 
+
+
+4. `Calsamplesize`: returns a list of the calculated necessary sample sizes in order to achieve a given power level at a given significance level for the three types of effects.
 
 ## Functions
 First, import the RCT2 library and load the relevant data set.
@@ -62,7 +65,7 @@ data <- RCT2::jd
 ```
 
 ### CalAPO
-In order to calculate a list of point estimates and variances for an effect of interest, run the CalAPO command. It is necessary first to extract the necessary vectors from the data.
+In order to calculate a list of point estimates and variances for an effect of interest, run the CalAPO command. It is necessary first to extract the necessary vectors from the data. The code below extracts `Z`, the vector of treatment assignments, `A`, the vector of treatment assignment mechanisms and `Y.perm`, the vector of potential outcomes for the variable of interest. In this case, we are interested in long-term fixed contracts, and permanent contracts.
 
 ```{r}
 #Change the data format to vectors of lists
@@ -100,88 +103,61 @@ lea.label <- unique(data$anonale)
 ```
 
 
-The above code extracts `Z`, the vector of treatment assignments, `A`, the vector of treatment assignment mechanisms and `Y.perm`, the vector of potential outcomes for the variable of interest. In this case, we are interested in long-term fixed contracts, and permanent contracts.
+Then, run the `CalAPO` command, which takes in the vector of treatment assignments, the assignment mechanism vector, and the vector of outcomes for the variable of interest which is `Y.LTFC` in this case. We see that the estimated average potential outcome for long-term fixed contracts is given by `Y.hat`. As stated in the paper, we also have the results for the estimated direct effects under the three treatment mechanisms (`ADE.est`), the estimated marginal direct effect (`MDE.est`), and the estimated spillover effects (`ASE.est`). We also have the estimated covariance matrices for the average potential outcomes, the estimated direct effect, estimated marginal effect, and estimated spillover effects.
 
 ```{r}
-test <- RCT2::CalAPO(Z,A,Y.LTFC)
+RCT2::CalAPO(Z,A,Y.LTFC)
+```
+
+Similarly, we can run this on the permanent contracts.
+
+```{r}
+RCT2::CalAPO(Z, A, Y.perm)
 ```
 
 
 ### Test2SRE
-We can also perform hypothesis tests on this data by using the `Test2SRE` function. THE `Test2SRE` function takes in `Z`, `A`, `Y`, as before, and also takes in an extra argument `effect`, where the desired effect should be specified (either ADE for direct effect, MDE for marginal direct effect, or ASE for spillover effect).
+We can also perform hypothesis tests on this data by using the `Test2SRE` function. THE `Test2SRE` function takes in `Z`, `A`, `Y`, as before, and also takes in an extra argument `effect`, where the desired effect should be specified (either ADE for direct effect, MDE for marginal direct effect, or ASE for spillover effect). The function returns `TRUE` if the hypothesis should be rejected, and `FALSE` otherwise. The default significance level is set to 0.05, but may be changed by altering the `alpha` argument.
 
 ```{r}
-RCT2::Test2SRE(Z,A,Y.LTFC,effect="MDE")
+RCT2::Test2SRE(Z,A,Y.LTFC,effect="MDE", alpha=0.05)
 ```
 
-### Calsamplesize
-Lastly, we can perform sample size calculations for the sample size needed for a given power at a given significance level. First, we implement a function which calculates the necessary parameters for the sample size calculation for this specific data.
+### Calpara and Calsamplesize  
+Lastly, we can perform sample size calculations for the sample size needed for a given power at a given significance level. First, we call the `calpara` function to calculate the necessary parameters for the sample size calculation, including the within-class and between class variances and the intraclass correlation coefficient. The effect size and the assignment mechanism also need to be specified.
+
 ```{r}
-Calpara <- function(Z,A,Y){
-  # number of clusters
-  n.lea <- length(A)
-
-est.Yj <-  array(dim=c(n.lea,2))
-est.sigmaj <- array(dim=c(n.lea,2))
-
-for (j in 1:n.lea){
-  Z.sub <-  Z[[j]]
-  Y.sub <-  Y[[j]]
-  n1.sub <- sum(Z.sub)
-  n0.sub <- sum(1-Z.sub)
-  est.Yj[j,2] <- sum(Z.sub*Y.sub)/n1.sub
-  est.Yj[j,1] <- sum((1-Z.sub)*Y.sub)/n0.sub
-  est.sigmaj [j,2] <-   sum( (Y.sub-est.Yj[j,2])^2*Z.sub)/(n1.sub-1)
-  est.sigmaj [j,1] <-   sum( (Y.sub-est.Yj[j,1])^2*(1-Z.sub))/(n0.sub-1)
-}
-
-Ja <- table(A)
-
-sigmab1 <- rep(-1,3)
-sigmab0 <- rep(-1,3)
-est.Y1 <-  rep(-1,3)
-est.Y0 <-  rep(-1,3)
-
-for ( a in 1:3){
-  est.Y1[a] <- sum(est.Yj[,2]*(A==a))/Ja[a]
-  sigmab1[a] <-     sum((est.Yj[,2]-est.Y1[a])^2*(A==a))/(Ja[a]-1)
-  est.Y0[a] <- sum(est.Yj[,1]*(A==a))/Ja[a]
-  sigmab0[a] <-     sum((est.Yj[,1]-est.Y0[a])^2*(A==a))/(Ja[a]-1)
-}
-
-n1 <- sapply(Z,sum)
-n <- sapply(Z,length)
-
-
-sigmaw <- mean(est.sigmaj)
-sigmab <- mean(c(sigmab1,sigmab0))- mean(1/n1-1/n)* sigmaw
-
-return(list(sigmaw = sigmaw,sigmab = sigmab,r=sigmab/(sigmab+sigmaw), n.avg = mean(n)))
-
-}
-```
-
-
-Then, we specify the effect size and use the `Calsamplesize` function to calculate the appropriate sample sizes for the permanent contract and the LTFC.
-```{r}
-### effect size
+### effect size and assignment mechanism
 mu <- 0.05
 pa <- c( 0.25,0.50, 0.75)
 qa <- rep(1/3,3)
 
-
+# calculate parameters for permanent contract
 var.perm <- Calpara(Z,A,Y.perm)
-var.perm$sigmab / (var.perm$sigmab+var.perm$sigmaw)
 n.avg <- round(var.perm$n)
-
+var.perm$sigmab / (var.perm$sigmab+var.perm$sigmaw)
 sigma.perm <- var.perm$sigmab+var.perm$sigmaw
 
-round(RCT2::Calsamplesize(0.03,n.avg,qa, pa, r=var.perm$r, sigma.perm, alpha=0.05, beta=0.2))
 
+# calculate parameters for long term fixed contract
 var.LTFC <- Calpara(Z,A,Y.LTFC)
 var.LTFC$sigmab / (var.LTFC$sigmab+var.LTFC$sigmaw)
 sigma.LTFC <- var.LTFC$sigmab+var.LTFC$sigmaw
 
+```
+
+
+Then, we specify the effect size and use the `Calsamplesize` function to calculate the appropriate sample sizes for the permanent contract and the LTFC. 
+
+```{r}
+# calculate sample size for the permanent contract
+print("Permanent Contract:")
+round(RCT2::Calsamplesize(0.03,n.avg,qa, pa, r=var.perm$r, sigma.perm, alpha=0.05, beta=0.2))
+
+
+# calculate sample size for the long term fixed contract
+print("Long Term Fixed Contract")
 round(RCT2::Calsamplesize(0.03,n.avg,qa, pa, r=var.LTFC$r, sigma.LTFC, alpha=0.05, beta=0.2))
 ```
 
+From the results, we can see the necessary sample sizes needed to detect a specific alternative at a certain power and significance level.

@@ -40,6 +40,7 @@
 #' \dQuote{Statistical Inference and Power Analysis for Direct and Spillover Effects in Two-Stage Randomized Experiments}, \emph{Technical Report}.
 #' @keywords two-stage randomized experiments
 #' 
+#' @name CalAPO
 #' 
 #' @export CalAPO
 
@@ -116,5 +117,8 @@ CalAPO <- function (Z, A, Y){
   var.hat.MDE <- t(C2)%*%hat.D%*%C2/J
   var.hat.ASE <- C3%*%hat.D%*%t(C3)/J
   
-  return(list(Y.hat=Y.hat, ADE.est = ADE, MDE.est = MDE, ASE.est = ASE, cov.hat = cov.hat, var.hat.ADE = var.hat.ADE, var.hat.MDE = var.hat.MDE, var.hat.ASE = var.hat.ASE))
+  output = list(Y.hat=Y.hat, ADE.est = ADE, MDE.est = MDE, ASE.est = ASE, cov.hat = cov.hat, var.hat.ADE = var.hat.ADE, var.hat.MDE = var.hat.MDE, var.hat.ASE = var.hat.ASE)
+  class(output) = "CalAPO"
+  
+  return(output)
 }
