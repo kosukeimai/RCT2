@@ -116,9 +116,6 @@ CalAPO <- function (Z, A, Y){
   var.hat.ADE <- C1%*%hat.D%*%t(C1)/J
   var.hat.MDE <- t(C2)%*%hat.D%*%C2/J
   var.hat.ASE <- C3%*%hat.D%*%t(C3)/J
-  
-  # output = list(Y.hat=Y.hat, ADE.est = ADE, MDE.est = MDE, ASE.est = ASE, cov.hat = cov.hat, var.hat.ADE = var.hat.ADE, var.hat.MDE = var.hat.MDE, var.hat.ASE = var.hat.ASE)
-  # class(output) = "CalAPO"
-  
+
   return(list(Y.hat=Y.hat, ADE.est = ADE, MDE.est = MDE, ASE.est = ASE, cov.hat = cov.hat, var.hat.ADE = var.hat.ADE, var.hat.MDE = var.hat.MDE, var.hat.ASE = var.hat.ASE))
 }
