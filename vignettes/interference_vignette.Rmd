@@ -50,7 +50,7 @@ The relevant functions for this analysis are the following:
 3. `calpara`: returns a list of the estimated within-cluster variance, between cluster variance, intraclass correlation coefficient, and average of the assignment vector which are necessary for the `Clsamplesize` 
 
 
-4. `Calsamplesize`: returns a list of the calculated necessary sample sizes in order to achieve a given power level at a given significance level for the three types of effects.
+4. `Calsamplesize`: returns a list of the necessary total number of clusters in order to achieve a given power level at a given significance level for the three types of effects.
 
 ## Functions
 First, import the RCT2 library and load the relevant data set.
@@ -65,9 +65,9 @@ data <- RCT2::jd
 ```
 
 ### CalAPO
-In order to calculate a list of point estimates and variances for an effect of interest, run the CalAPO command. It is necessary first to extract the necessary vectors from the data. The code below extracts `Z`, the vector of treatment assignments, `A`, the vector of treatment assignment mechanisms and `Y.perm`, the vector of potential outcomes for the variable of interest. In this case, we are interested in long-term fixed contracts, and permanent contracts.
+In order to calculate a list of point estimates and variances for an effect of interest, run the CalAPO command. It is necessary first to extract `Z`, the vector of treatment assignments, `A`, the vector of treatment assignment mechanisms and `Y.perm`, the vector of potential outcomes for the variable of interest from the data. In this case, we are interested in long-term fixed contracts, and permanent contracts.
 
-```{r}
+```{r, include = F}
 #Change the data format to vectors of lists
 lea.label <- unique(data$anonale) 
 ## total number of clusters

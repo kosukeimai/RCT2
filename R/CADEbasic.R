@@ -1,5 +1,6 @@
 ##### basic functions for calculating the CADE
 
+# subtracts element j of list element i of a with element j of list element i of b
 Difflist=function(a,b){
   J=length(a)
   c=a
@@ -18,6 +19,7 @@ Meanlist=function(a){
   return(s/J)
 }
 
+# multiplies element j of list element i of a with element j of list element i of b
 Productlist=function(a,b){
   J=length(a)
   c=a

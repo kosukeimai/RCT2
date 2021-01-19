@@ -30,12 +30,12 @@
 
 
 
-print <- function(x) UseMethod("print")
+# print <- function(x) UseMethod("print")
 
 
-#' @rdname print
+
 #' @method print random
-print.random <- function(x){
+print.random <- function(x, ...){
   variance <- c(x$var.CADE1, x$var.CADE0, x$var.CASE1, x$var.CASE0,x$var.DEY1, x$var.DEY0, x$var.DED1, x$var.DED0, x$var.SEY1, x$var.SEY0, x$var.SED1, x$var.SED0)
   stds <- sqrt(variance)
   estimate <- c(x$CADE1, x$CADE0, x$CASE1, x$CASE0, x$DEY1, x$DEY0, x$DED1, x$DED0, x$SEY1, x$SEY0, x$SED1, x$SED0)
@@ -51,9 +51,8 @@ print.random <- function(x){
   return(out)
 }
 
-#' @rdname print
 #' @method print regression
-print.regression <- function(x){
+print.regression <- function(x, ...){
   CIs <- c(x$CADE1.CI, x$CADE0.CI)
   CADEs <- c(x$CADE1, x$CADE2)
   name <- c("CADE1", "CADE0")
@@ -72,9 +71,8 @@ print.regression <- function(x){
 }
 
 
-#' @rdname print
 #' @method print parametric
-print.parametric <- function(x){
+print.parametric <- function(x, ...){
   names <- c("ITT DE", "IV DE", "ITT SE", "IV SE")
   effects <- rbind(x$ITT.DE, x$IV.DE, x$ITT.SE, x$IV.SE)
   CIs <- rbind(x$ITT.DE.CI, x$ITT.SE.CI, x$IV.DE.CI, x$IV.SE.CI)
