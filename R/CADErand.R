@@ -82,185 +82,196 @@ CADErand<-function(data,individual=1, ci = 0.95){
       D[[i]]<-D[[i]]*n[i]*J/N
     }
   }
-  est.Dj00<-rep(0,J)
-  est.Dj00<- sapply(Difflist(D,Productlist(D,Z)),sum)/(n-sapply(Z,sum))*(1-A)
-  est.Dj01<-rep(0,J)
-  est.Dj01<- sapply(Difflist(D,Productlist(D,Z)),sum)/(n-sapply(Z,sum))*(A)
-  est.Dj10<-rep(0,J)
-  est.Dj10<-sapply(Productlist(D,Z),sum)/(sapply(Z,sum))*(1-A)
-  est.Dj11<-rep(0,J)
-  est.Dj11<- sapply(Productlist(D,Z),sum)/(sapply(Z,sum))*(A)
-  est.D00<- sum(est.Dj00*(1-A))/sum(1-A)
-  est.D10<- sum(est.Dj10*(1-A))/sum(1-A)
-  est.D01<- sum(est.Dj01*(A))/sum(A)
-  est.D11<- sum(est.Dj11*(A))/sum(A)
-  est.DEDj0<-est.Dj10-est.Dj00
-  est.DEDj1<-est.Dj11-est.Dj01
-  est.DED1<-est.D11-est.D01
-  est.DED0<-est.D10-est.D00
-  est.SED1<-est.D11-est.D10
-  est.SED0<-est.D01-est.D00
-  ### variance
-  est.xiDE0<-sum((est.DEDj0-est.DED0)^2*(1-A))/(sum(1-A)-1)
-  est.xiDE1<-sum((est.DEDj1-est.DED1)^2*(A))/(sum(A)-1)
-  est.xij01<-rep(0,J)
-  est.xij00<-rep(0,J)
-  est.xij11<-rep(0,J)
-  est.xij10<-rep(0,J)
-  est.xib00<-sum((est.Dj00-est.D00)^2*(1-A))/(sum(1-A)-1)
-  est.xib10<-sum((est.Dj10-est.D10)^2*(1-A))/(sum(1-A)-1)
-  est.xib01<-sum((est.Dj01-est.D01)^2*(A))/(sum(A)-1)
-  est.xib11<-sum((est.Dj11-est.D11)^2*(A))/(sum(A)-1)
-  for (j in 1:J){
-    est.xij01[j]<-sum((D[[j]]-est.Dj01[j])^2*(1-Z[[j]]))/(sum(1-Z[[j]])-1)
-    est.xij00[j]<-sum((D[[j]]-est.Dj00[j])^2*(1-Z[[j]]))/(sum(1-Z[[j]])-1)
-    est.xij11[j]<-sum((D[[j]]-est.Dj11[j])^2*(Z[[j]]))/(sum(Z[[j]])-1)
-    est.xij10[j]<-sum((D[[j]]-est.Dj10[j])^2*(Z[[j]]))/(sum(Z[[j]])-1)
-  }
-  var.DED0<-est.xiDE0*(1/sum(1-A)-1/J)+ sum((est.xij00/(n-sapply(Z,sum))+est.xij10/sapply(Z,sum))*(1-A))/J/sum(1-A)
-  var.DED1<-est.xiDE1*(1/sum(A)-1/J)+ sum((est.xij01/(n-sapply(Z,sum))+est.xij11/sapply(Z,sum))*(A))/J/sum(A)
-  var.SED1<-est.xib11/sum(A)+est.xib10/sum(1-A)
-  var.SED0<-est.xib01/sum(A)+est.xib00/sum(1-A)
 
-  est.Yj00<-rep(0,J)
-  est.Yj00<- sapply(Difflist(Y,Productlist(Y,Z)),sum)/(n-sapply(Z,sum))*(1-A)
-  est.Yj01<-rep(0,J)
-  est.Yj01<- sapply(Difflist(Y,Productlist(Y,Z)),sum)/(n-sapply(Z,sum))*(A)
-  est.Yj10<-rep(0,J)
-  est.Yj10<- sapply(Productlist(Y,Z),sum)/(sapply(Z,sum))*(1-A)
-  est.Yj11<-rep(0,J)
-  est.Yj11<- sapply(Productlist(Y,Z),sum)/(sapply(Z,sum))*(A)
-  est.Y00<- sum(est.Yj00*(1-A))/sum(1-A)
-  est.Y10<- sum(est.Yj10*(1-A))/sum(1-A)
-  est.Y01<- sum(est.Yj01*(A))/sum(A)
-  est.Y11<- sum(est.Yj11*(A))/sum(A)
-  est.DEYj0<-est.Yj10-est.Yj00
-  est.DEYj1<-est.Yj11-est.Yj01
-  est.DEY1<-est.Y11-est.Y01
-  est.DEY0<-est.Y10-est.Y00
-  est.SEY1<-est.Y11-est.Y10
-  est.SEY0<-est.Y01-est.Y00
-  ### variance
-  est.sigmaDE0<-sum((est.DEYj0-est.DEY0)^2*(1-A))/(sum(1-A)-1)
-  est.sigmaDE1<-sum((est.DEYj1-est.DEY1)^2*(A))/(sum(A)-1)
-  est.sigmaj01<-rep(0,J)
-  est.sigmaj00<-rep(0,J)
-  est.sigmaj11<-rep(0,J)
-  est.sigmaj10<-rep(0,J)
-  est.sigmab00<-sum((est.Yj00-est.Y00)^2*(1-A))/(sum(1-A)-1)
-  est.sigmab10<-sum((est.Yj10-est.Y10)^2*(1-A))/(sum(1-A)-1)
-  est.sigmab01<-sum((est.Yj01-est.Y01)^2*(A))/(sum(A)-1)
-  est.sigmab11<-sum((est.Yj11-est.Y11)^2*(A))/(sum(A)-1)
-  for (j in 1:J){
-    est.sigmaj01[j]<-sum((Y[[j]]-est.Yj01[j])^2*(1-Z[[j]]))/(sum(1-Z[[j]])-1)
-    est.sigmaj00[j]<-sum((Y[[j]]-est.Yj00[j])^2*(1-Z[[j]]))/(sum(1-Z[[j]])-1)
-    est.sigmaj11[j]<-sum((Y[[j]]-est.Yj11[j])^2*(Z[[j]]))/(sum(Z[[j]])-1)
-    est.sigmaj10[j]<-sum((Y[[j]]-est.Yj10[j])^2*(Z[[j]]))/(sum(Z[[j]])-1)
-  }
-  var.DEY0<-est.sigmaDE0*(1/sum(1-A)-1/J)+ sum((est.sigmaj00/(n-sapply(Z,sum))+est.sigmaj10/sapply(Z,sum))*(1-A))/J/sum(1-A)
-  var.DEY1<-est.sigmaDE1*(1/sum(A)-1/J)+ sum((est.sigmaj01/(n-sapply(Z,sum))+est.sigmaj11/sapply(Z,sum))*(A))/J/sum(A)
-  var.SEY1<-est.sigmab11/sum(A)+est.sigmab10/sum(1-A)
-  var.SEY0<-est.sigmab01/sum(A)+est.sigmab00/sum(1-A)
-
-  ### covariance
-  est.zetaDE0<-sum((est.DEYj0-est.DEY0)*(est.DEDj0-est.DED0)*(1-A))/(sum(1-A)-1)
-  est.zetaDE1<-sum((est.DEYj1-est.DEY1)*(est.DEDj1-est.DED1)*(A))/(sum(A)-1)
-  est.zetaj01<-rep(0,J)
-  est.zetaj00<-rep(0,J)
-  est.zetaj11<-rep(0,J)
-  est.zetaj10<-rep(0,J)
-  est.zetab00<-sum((est.Yj00-est.Y00)*(est.Dj00-est.D00)*(1-A))/(sum(1-A)-1)
-  est.zetab10<-sum((est.Yj10-est.Y10)*(est.Dj10-est.D10)*(1-A))/(sum(1-A)-1)
-  est.zetab01<-sum((est.Yj01-est.Y01)*(est.Dj01-est.D01)*(A))/(sum(A)-1)
-  est.zetab11<-sum((est.Yj11-est.Y11)*(est.Dj11-est.D11)*(A))/(sum(A)-1)
-  for (j in 1:J){
-    est.zetaj01[j]<-sum((Y[[j]]-est.Yj01[j])*(D[[j]]-est.Dj01[j])*(1-Z[[j]]))/(sum(1-Z[[j]])-1)
-    est.zetaj00[j]<-sum((Y[[j]]-est.Yj00[j])*(D[[j]]-est.Dj00[j])*(1-Z[[j]]))/(sum(1-Z[[j]])-1)
-    est.zetaj11[j]<-sum((Y[[j]]-est.Yj11[j])*(D[[j]]-est.Dj11[j])*(Z[[j]]))/(sum(Z[[j]])-1)
-    est.zetaj10[j]<-sum((Y[[j]]-est.Yj10[j])*(D[[j]]-est.Dj10[j])*(Z[[j]]))/(sum(Z[[j]])-1)
-  }
-  est.zeta0<-est.zetaDE0*(1/sum(1-A)-1/J)+ sum((est.zetaj00/(n-sapply(Z,sum))+est.zetaj10/sapply(Z,sum))*(1-A))/J/sum(1-A)
-  est.zeta1<-est.zetaDE1*(1/sum(A)-1/J)+ sum((est.zetaj01/(n-sapply(Z,sum))+est.zetaj11/sapply(Z,sum))*(A))/J/sum(A)
-  est.zetab1<-est.zetab11/sum(A)+est.zetab10/sum(1-A)
-  est.zetab0<-est.zetab01/sum(A)+est.zetab00/sum(1-A)
-
-
-  #### CADE and CASE
-  est.CADE1<-est.DEY1/est.DED1
-  est.CADE0<-est.DEY0/est.DED0
-  est.CASE1<-est.SEY1/est.SED1
-  est.CASE0<-est.SEY0/est.SED0
-  est.varCADE1<-   (var.DEY1-2*est.CADE1*est.zeta1+est.CADE1^2*var.DED1)/est.DED1^2
-  est.varCADE0<-   (var.DEY0-2*est.CADE0*est.zeta0+est.CADE0^2*var.DED0)/est.DED0^2
-  est.varCASE1<-   (var.SEY1-2*est.CASE1*est.zetab1+est.CASE1^2*var.SED1)/est.SED1^2
-  est.varCASE0<-   (var.SEY0-2*est.CASE0*est.zetab0+est.CASE0^2*var.SED0)/est.SED0^2
-
-
-  ### standard deviations
-  est.stdCADE1 <- sqrt(est.varCADE1)
-  est.stdCADE0 <- sqrt(est.varCADE0)
-  est.stdCASE1 <- sqrt(est.varCASE1)
-  est.stdCASE0 <- sqrt(est.varCASE0)
-
-  std.DEY0 <- sqrt(var.DEY0)
-  std.DEY1 <- sqrt(var.DEY1)
-  std.SEY1 <- sqrt(var.SEY1)
-  std.SEY0 <- sqrt(var.SEY0)
-
-  std.DED0 <- sqrt(var.DED0)
-  std.DED1 <- sqrt(var.DED1)
-  std.SED1 <- sqrt(var.SED1)
-  std.SED0 <- sqrt(var.SED0)
-
-  ### right confidence intervals
-  level <- qnorm((1-ci)/2, 0, 1)
-  rci.CADE1 <- round(est.CADE1-level*est.stdCADE1, 3)
-  rci.CADE0 <- round(est.CADE0-level*est.stdCADE0, 3)
-  rci.CASE1 <- round(est.CASE1-level*est.stdCASE1, 3)
-  rci.CASE0 <- round(est.CASE0-level*est.stdCASE0, 3)
-
-  rci.DEY0 <- round(est.DEY0-level*std.DEY0, 3)
-  rci.DEY1 <- round(est.DEY1-level*std.DEY1, 3)
-  rci.SEY0 <- round(est.SEY0-level*std.SEY0, 3)
-  rci.SEY1 <- round(est.SEY1-level*std.SEY1, 3)
-
-  rci.DED0 <- round(est.DED0-level*std.DED0, 3)
-  rci.DED1 <- round(est.DED1-level*std.DED1, 3)
-  rci.SED0 <- round(est.SED0-level*std.SED0, 3)
-  rci.SED1 <- round(est.SED1-level*std.SED1, 3)
-
-  ### left confidence intervals
-  lci.CADE1 <- round(est.CADE1+level*est.stdCADE1, 3)
-  lci.CADE0 <- round(est.CADE0+level*est.stdCADE0, 3)
-  lci.CASE1 <- round(est.CASE1+level*est.stdCASE1, 3)
-  lci.CASE0 <- round(est.CASE0+level*est.stdCASE0, 3)
-
-  lci.DEY0 <- round(est.DEY0+level*std.DEY0, 3)
-  lci.DEY1 <- round(est.DEY1+level*std.DEY1, 3)
-  lci.SEY0 <- round(est.SEY0+level*std.SEY0, 3)
-  lci.SEY1 <- round(est.SEY1+level*std.SEY1, 3)
-
-  lci.DED0 <- round(est.DED0+level*std.DED0, 3)
-  lci.DED1 <- round(est.DED1+level*std.DED1, 3)
-  lci.SED0 <- round(est.SED0+level*std.SED0, 3)
-  lci.SED1 <- round(est.SED1+level*std.SED1, 3)
-
-
-
-  output <- list(CADE1=est.CADE1,CADE0=est.CADE0,CASE1=est.CASE1,CASE0=est.CASE0, var.CADE1=est.varCADE1,var.CADE0=est.varCADE0,var.CASE1=est.varCASE1,var.CASE0=est.varCASE0,
-                DEY1=est.DEY1,DEY0=est.DEY0,DED1=est.DED1,DED0=est.DED0,
-                var.DEY1=var.DEY1,var.DEY0=var.DEY0,var.DED1=var.DED1,var.DED0=var.DED0,
-                SEY1=est.SEY1,SEY0=est.SEY0,SED1=est.SED1,SED0=est.SED0,
-                var.SEY1=var.SEY1,var.SEY0=var.SEY0,var.SED1=var.SED1,var.SED0=var.SED0,
-                lci.CADE1 = lci.CADE1, lci.CADE0 = lci.CADE0, lci.CASE1 = lci.CASE1, lci.CASE0 = lci.CASE0,
-                lci.DEY0 = lci.DEY0, lci.DEY1 = lci.DEY1, lci.SEY0 = lci.SEY0, lci.SEY1 = lci.SEY1,
-                lci.DED0 = lci.DED0, lci.DED1 = lci.DED1, lci.SED0 = lci.SED0, lci.SED1 = lci.SED1,
-                rci.CADE1 = rci.CADE1, rci.CADE0 = rci.CADE0, rci.CASE1 = rci.CASE1, rci.CASE0 = rci.CASE0,
-                rci.DEY0 = rci.DEY0, rci.DEY1 = rci.DEY1, rci.SEY0 = rci.SEY0, rci.SEY1 = rci.SEY1,
-                rci.DED0 = rci.DED0, rci.DED1 = rci.DED1, rci.SED0 = rci.SED0, rci.SED1 = rci.SED1)
-
-  class(output) = "random"
+  A2 <- factor(A)
+  A_mat <- model.matrix(~A2-1)
+  init <- sapply(Difflist(D,Productlist(D,Z)),sum)/(n-sapply(Z,sum))
   
-  return(list(Y=Y, D=D))
+  
+  Dj0 <- init*A_mat # this is est.Dj00 and est.Dj01
+  Dj0 <- as.data.frame(Dj0)
+  
+  # we do the same thing for the case z=1
+  Dj1init <- sapply(Productlist(D,Z),sum)/(sapply(Z,sum))
+  
+  Dj1 <- Dj1init*A_mat # this is est.Dj10 and est.Dj11
+  Dj1 <- as.data.frame(Dj1)
+  
+  # next step up averaging analogous
+  # z = 0
+  D0 <- t(as.data.frame(colSums(Dj0)/colSums(A_mat))) # this is est.D00 and est.D01
+  D1 <- t(as.data.frame(colSums(Dj1)/colSums(A_mat))) # this is est.D10 and est.D11
+  D0 <- rbind(D0, D0[rep(1, nrow(A_mat)-1), ]) # change nrow(DEDj) to something more general
+  D1 <- rbind(D1, D1[rep(1, nrow(A_mat)-1), ])
+  
+  # analogous DED calculations 
+  DEDj <- as.data.frame(Dj1-Dj0 )# this is est.DEDj0 and est.DEDj1
+  DED <-as.data.frame(D1-D0) # this is est.DED0 and est.DED1
+  
+  
+  # make sure that this is correct
+  lenSED <- ncol(A_mat)*(ncol(A_mat)-1)/2
+  SED0 <- rep(0, lenSED)
+  SED1 <- rep(0, lenSED)
+  for(i in 2:lenSED){
+    SED0[i-1] <- D0[1, i]-D0[1, i-1]
+    SED1[i-1] <- D1[1, i]-D1[1, i-1]
+  }
+  
+  est.SED <- c(SED0, SED1)
+  
+  # analogous variance calculations
+  # DED <- rbind(DED, DED[rep(1, nrow(DEDj)-1), ])
+  est.xiDE <- colSums((DEDj - DED)^2*(A_mat))/(colSums(A_mat)-1) # est.xiDE0 and est.xiDE1
+  est.xib0 <- colSums((Dj0-D0)^2*A_mat)/(colSums(A_mat)-1) # est.xib00 and est.xib01
+  est.xib1 <- colSums((Dj1-D1)^2*A_mat)/(colSums(A_mat)-1) # est.xib10 and est.xib11
+  
+  
+  est.xij0 <- matrix(0, nrow=ncol(A_mat), ncol=J) # est.xij00 and est.xij01
+  est.xij1 <- matrix(0, nrow=ncol(A_mat), ncol=J) # est.xj10 and est.xij11
+  
+  for (j in 1:J){
+    tmp1 <- Dj0[j, ]
+    tmp2 <- rbind(tmp1, tmp1[rep(1,length(D[[j]])-1), ])
+    est.xij0[, j] <- unlist(colSums((D[[j]]-tmp2)^2*(1-Z[[j]]))/(sum(1-Z[[j]])-1)) # est.xij00 and est.xij01
+    
+    tmp3 <- Dj1[j, ]
+    tmp4 <- rbind(tmp3, tmp3[rep(1, length(D[[j]])-1), ])
+    est.xij1[, j] <- unlist(colSums((D[[j]]-tmp4)^2*(Z[[j]]))/(sum(Z[[j]])-1)) # est.xj10 and est.xij11
+  }
+  
+  est.xij0 <- as.data.frame(est.xij0)
+  est.xij1 <- as.data.frame(est.xij1)
+  
+  
+  Z_sum <- sapply(Z, sum)
+  n_Z_sum <- n-sapply(Z, sum)
+  denom1 <- t(matrix( Z_sum , length(Z_sum) , nrow(est.xij0) ))
+  denom2 <- t(matrix( n_Z_sum , length(n_Z_sum) , nrow(est.xij0) ))
+  
+  var.DED <- est.xiDE*(1/colSums(A_mat)-1/J)+rowSums((est.xij0/denom2+est.xij1/denom1)*t(A_mat))/J/colSums(A_mat) # var.DED0 and var.DED1
+  var.SED1 <- sum(est.xib1/colSums(A_mat))
+  var.SED0 <- sum(est.xib0/colSums(A_mat))
+  var.SED <- c(var.SED0, var.SED1)
+  est.Yj0 <- sapply(Difflist(Y,Productlist(Y,Z)),sum)/(n-sapply(Z,sum))*A_mat # est.Yj00 and est.Yj01
+  est.Yj1 <- sapply(Productlist(Y,Z),sum)/(sapply(Z,sum))*A_mat # est.Yj10 and est.Yj11
+  est.Y0 <- colSums(est.Yj0*A_mat)/colSums(A_mat) # est.Y00 and est.Y01
+  est.Y1 <- colSums(est.Yj1*A_mat)/colSums(A_mat) # est.Y10 and est. Y11
+  est.DEYj <- est.Yj1-est.Yj0 # est.DEYj0 and est.DEYj1
+  est.DEY <- est.Y1-est.Y0 # est.DEY0 and est.DEY1
+  lenSEY <- ncol(A_mat)*(ncol(A_mat)-1)/2
+  SEY0 <- rep(0, lenSEY) # this is est.SEY0
+  SEY1 <- rep(0, lenSEY) # this is est.SEY1
+  for(i in 2:lenSEY){
+    SEY0[i-1] <- est.Y0[i]-est.Y0[i-1]
+    SEY1[i-1] <- est.Y1[i]-est.Y1[i-1]
+  }
+  est.SEY <- c(SEY0, SEY1)
+  
+  
+  
+  
+  # variance for spillover effects
+  est.DEY <- t(matrix( est.DEY , length(est.DEY) , nrow(est.DEYj) ))
+  est.Y0 <- t(matrix( est.Y0 , length(est.Y0) , nrow(est.Yj0) ))
+  est.Y1 <- t(matrix( est.Y1 , length(est.Y1) , nrow(est.Yj1) ))
+  
+  est.sigmaDE <- colSums((est.DEYj-est.DEY)^2*A_mat)/(colSums(A_mat)-1) # est.sigmaDEO and est.sigmaDE1
+  est.sigmab0 <- colSums((est.Yj0-est.Y0)^2*A_mat)/(colSums(A_mat)-1) # est.sigmab00 and sigmab01
+  est.sigmab1 <- colSums((est.Yj1-est.Y1)^2*A_mat)/(colSums(A_mat)-1) # est.sigmab10 and est.sigmab11
+  est.sigmaj0 <- matrix(0, 2, J) # est.sigmaj00 and est.sigmaj01
+  est.sigmaj1 <- matrix(0, 2, J) # est.sigmaj10 and est.sigma11
+  
+  for(j in 1:J){
+    tmp1 <- est.Yj0[j, ]
+    tmp2 <- t( matrix( tmp1 , length(tmp1) , length(Y[[j]]) ) )
+    est.sigmaj0[, j] <- colSums((Y[[j]]-tmp2)^2*(1-Z[[j]]))/(sum(1-Z[[j]])-1)
+    
+    tmp3 <- est.Yj1[j, ]
+    tmp4 <- t( matrix( tmp3 , length(tmp3) , length(Y[[j]]) ) )
+    est.sigmaj1[, j] <- colSums((Y[[j]]-tmp4)^2*(Z[[j]]))/(sum(Z[[j]])-1)
+  }
+  
+  est.sigmaj0 <- as.data.frame(est.sigmaj0)
+  est.sigmaj1 <- as.data.frame(est.sigmaj1)
+  
+  # var.DEY0 and var.DEY1
+  var.DEY <- est.sigmaDE*(1/colSums(A_mat)-1/J)+rowSums( ( t(apply( est.sigmaj0, 1, "/", n-sapply(Z, sum)))+t(apply( est.sigmaj1, 1, "/", sapply(Z, sum))))*t(A_mat))/J/colSums(A_mat)
+  # var.SEY0 and var.SEY1
+  var.SEY <- c(sum(est.sigmab0/colSums(A_mat)), sum(est.sigmab1/colSums(A_mat)))
+  
+  # analogous covariance calculations
+  est.zetaDE <- colSums( (est.DEYj-est.DEY)*(DEDj-DED)*(A_mat) )/(colSums(A_mat)-1) # est.zetaDE0 and est.zetaDE1
+  est.zetab0 <- colSums( (est.Yj0-est.Y0)*(Dj0-D0)*(A_mat) )/(colSums(A_mat)-1) # est.zetab00 and est.zetab01
+  est.zetab1 <- colSums( (est.Yj1-est.Y1)*(Dj1-D1)*(A_mat) )/(colSums(A_mat)-1) # est.zetab10 and est.zetab11
+  
+  est.zetaj0 <- matrix(0, nrow=ncol(A_mat), ncol=J) # est.zetaj01 and est.zetaj01
+  est.zetaj1 <- matrix(0, nrow=ncol(A_mat), ncol=J) # est.zetaj10 and est.zetaj11
+  
+  for(j in 1:J){
+    tmp1 <- Dj0[j, ]
+    tmp2 <- est.Yj0[j, ]
+    tmp3 <- rbind(tmp1, tmp1[rep(1,length(D[[j]])-1), ])
+    tmp4 <- t( matrix( tmp2 , length(tmp2) , length(Y[[j]]) ) )
+    est.zetaj0[, j] <- colSums((Y[[j]]-tmp4)*(D[[j]]-tmp3)*(1-Z[[j]]))/(sum(1-Z[[j]])-1)
+    
+    tmp5 <- Dj1[j, ]
+    tmp6 <- est.Yj1[j, ]
+    tmp7 <- rbind(tmp5, tmp5[rep(1,length(D[[j]])-1), ])
+    tmp8 <- t( matrix( tmp6 , length(tmp6) , length(Y[[j]]) ) )
+    est.zetaj1[, j] <- colSums((Y[[j]]-tmp8)*(D[[j]]-tmp7)*(Z[[j]]))/(sum(Z[[j]])-1)
+    
+  }
+  
+  est.zeta <- est.zetaDE*(1/colSums(A_mat)-1/J) + rowSums( (t(apply( est.zetaj0, 1, "/", n-sapply(Z, sum))) + t(apply( est.zetaj1, 1, "/",  sapply(Z, sum))))*t(A_mat) )/J/colSums(A_mat) 
+  est.zetab <- c(sum(est.zetab0/colSums(A_mat)) ,sum( est.zetab1/colSums(A_mat))) # est.zetab0 and est.zetab1
+  
+  
+  
+  #### CADE and CASE
+  est.CADE <- (est.DEY/DED)[1,] # est.CADE0 est.CADE1
+  est.CASE <- c(SEY0/SED0, SEY1/SED1) # est. CASE0 and est.CASE1 , may look different when there are >= 3 assignment mechanisms
+  est.varCADE <- (var.DEY-2*est.CADE*est.zeta + est.CADE^2*var.DED)/DED[1,]^2 # est.varCADE0 and est.varCADE1
+  est.varCASE <- (var.SEY-2*est.CASE*est.zetab + est.CASE^2*var.SED)/est.SED^2 # est.varCASE0 and est.varCASE1
+  
+  
+  
+  # standard deviations
+  est.stdCADE <- sqrt(est.varCADE)
+  est.stdCASE <- sqrt(est.varCASE)
+  
+  std.DEY <- sqrt(var.DEY)
+  std.SEY <- sqrt(var.SEY)
+  
+  std.DED <- sqrt(var.DED)
+  std.SED <- sqrt(var.SED)
+  
+  #### original code #####
+  
+  # right confidence intervals 
+  level <- qnorm((1-ci)/2, 0, 1)
+  rci.CADE <- round(est.CADE-level*est.stdCADE, 3)
+  rci.CASE <- round(est.CASE-level*est.stdCASE, 3)
+  
+  rci.DEY <- round(est.DEY[1,]-level*std.DEY, 3)
+  rci.SEY <- round(est.SEY-level*std.SEY, 3)
+  
+  rci.DED <- round(DED[1,]-level*std.DED, 3)
+  rci.SED <- round(est.SED-level*std.SED, 3)
+  
+  # left confidence intervals 
+  lci.CADE <- round(est.CADE+level*est.stdCADE, 3)
+  lci.CASE <- round(est.CASE+level*est.stdCASE, 3)
+  
+  lci.DEY <- round(est.DEY[1, ]+level*std.DEY, 3)
+  lci.SEY <- round(est.SEY+level*std.SEY, 3)
+  
+  lci.DED <- round(DED[1,]+level*std.DED, 3)
+  lci.SED <- round(est.SED+level*std.SED, 3)
+  
+# 
+#   class(output) = "random"
+  
+  return(est.CADE)
 }
 
