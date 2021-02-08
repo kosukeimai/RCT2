@@ -60,7 +60,7 @@ Calsamplesize = function (mu,n,qa, pa, r, sigma=1, alpha=0.05, beta=0.2){
     D0[2*i,2*i-1] <-  0
   }
   
-  ## constrast matrices
+  ## contrast matrices
   C1 <-  array(0,dim=c(m,2*m))
   C2 <-  rep(0,2*m)
   

@@ -155,6 +155,8 @@ CADEreg=function(data, ci.level=0.95){
   }
   
   var.cluster.hc2=solve(MM)%*%var.cluster.med%*%solve(MM)
+  
+  
   ### individual robust hc2
   res.ind=rep(0,sum(n))
   var.ind.med=array(0,dim=c(4,4))

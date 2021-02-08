@@ -30,9 +30,25 @@
 
 
 
-# print <- function(x) UseMethod("print")
 
-
+#' @method print regression
+print.regression <- function(x, ...){
+  CIs <- c(x$CADE1.CI, x$CADE0.CI)
+  CADEs <- c(x$CADE1, x$CADE0)
+  name <- c("CADE1", "CADE0")
+  variances <- c("Cluster Robust Variance", "HC2 Variance", "Cluster Robust HC2 Variance", "Individual Variance", "Proposed Variance")
+  cluster_robust_variance <- c(x$var1.clu, x$var0.clu)
+  HC2_variance <- c(x$var1.hc2, x$var0.hc2)
+  cluster_robust_HC2_variance <- c(x$var1.clu.hc2, x$var0.clu.hc2)
+  individual_variance <- c(x$var1.ind, x$var0.ind)
+  proposed_variance <- c(x$var1.reg, x$var0.reg)
+  variance_values <- as.data.frame(rbind(cluster_robust_variance, HC2_variance, cluster_robust_HC2_variance, individual_variance, proposed_variance))
+  names(variance_values) <- c("var(CADE1)", "var(CADE0)")
+  estimates <- as.data.frame(cbind(name, CADEs, CIs))
+  rownames(estimates) <- NULL
+  # out <- list(estimates, variance_values)
+  return("Test")
+}
 
 #' @method print random
 print.random <- function(x, ...){
@@ -51,24 +67,8 @@ print.random <- function(x, ...){
   return(out)
 }
 
-#' @method print regression
-print.regression <- function(x, ...){
-  CIs <- c(x$CADE1.CI, x$CADE0.CI)
-  CADEs <- c(x$CADE1, x$CADE2)
-  name <- c("CADE1", "CADE0")
-  variances <- c("Cluster Robust Variance", "HC2 Variance", "Cluster Robust HC2 Variance", "Individual Variance", "Proposed Variance")
-  cluster_robust_variance <- c(x$var1.clu, x$var0.clu)
-  HC2_variance <- c(x$var1.hc2, x$var0.hc2)
-  cluster_robust_HC2_variance <- c(x$var1.clu.hc2, x$var0.clu.hc2)
-  individual_variance <- c(x$var1.ind, x$var0.ind)
-  proposed_variance <- c(x$var1.reg, x$var0.reg)
-  variance_values <- as.data.frame(rbind(cluster_robust_variance, HC2_variance, cluster_robust_HC2_variance, individual_variance, proposed_variance))
-  names(variance_values) <- c("var(CADE1)", "var(CADE0)")
-  estimates <- as.data.frame(cbind(name, CADEs, CIs))
-  rownames(estimates) <- NULL
-  out <- list(estimates, variance_values)
-  return(out)
-}
+
+
 
 
 #' @method print parametric

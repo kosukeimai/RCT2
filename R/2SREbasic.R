@@ -24,7 +24,7 @@ Cals = function(m, alpha=0.05, beta=0.2){
 
 ####  minimize  s'(C3 D.hat C3)^{-1}s under max |ASE(z,a,a')|=1
 ## The function enumerates all the possible situations when max |ASE(z;a,a')|=1
-## For example, one situtation with m = 3  is  -1 \leq ASE(z;a,a') \leq 1 for all z a a' and
+## For example, one situation with m = 3  is  -1 \leq ASE(z;a,a') \leq 1 for all z a a' and
 ##   ASE(0;1,2) =1
 
 
@@ -66,6 +66,7 @@ quadprogSE = function(D.se){
 Calpara <- function(Z,A,Y){
   # number of clusters
   n.lea <- length(A)
+  m <- length(unique(A))
   
   est.Yj <-  array(dim=c(n.lea,2))
   est.sigmaj <- array(dim=c(n.lea,2))
@@ -83,10 +84,10 @@ Calpara <- function(Z,A,Y){
   
   Ja <- table(A)
   
-  sigmab1 <- rep(-1,3)
-  sigmab0 <- rep(-1,3)
-  est.Y1 <-  rep(-1,3)
-  est.Y0 <-  rep(-1,3)
+  sigmab1 <- rep(-1,m)
+  sigmab0 <- rep(-1,m)
+  est.Y1 <-  rep(-1,m)
+  est.Y0 <-  rep(-1,m)
   
   for ( a in 1:3){
     est.Y1[a] <- sum(est.Yj[,2]*(A==a))/Ja[a]
