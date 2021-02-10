@@ -50,6 +50,7 @@ print.regression <- function(x, ...){
   return("Test")
 }
 
+#' @export
 #' @method print random
 print.random <- function(x, ...){
   variance <- c(x$var.CADE1, x$var.CADE0, x$var.CASE1, x$var.CASE0,x$var.DEY1, x$var.DEY0, x$var.DED1, x$var.DED0, x$var.SEY1, x$var.SEY0, x$var.SED1, x$var.SED0)
@@ -70,7 +71,7 @@ print.random <- function(x, ...){
 
 
 
-
+#' @export
 #' @method print parametric
 print.parametric <- function(x, ...){
   names <- c("ITT DE", "IV DE", "ITT SE", "IV SE")
@@ -83,6 +84,8 @@ print.parametric <- function(x, ...){
   out <- list(init, tstat_pvals)
   return(out)
 }
+
+
 
 
 

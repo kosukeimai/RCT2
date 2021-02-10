@@ -18,7 +18,8 @@ A list of class \code{calpara} which contains the following item:
 \item{sigmaw}{ The within-cluster variance of the potential outcomes, with the assumption that the all of the variances the same. }
 \item{sigmab}{ The between-cluster variance of the potential outcomes, with the assumption that all of the variances are the same. }
 \item{r}{ The intraclass correlation coefficient with respect to the potential outcomes. }
-\item{n.avg}{ The mean of the treatment assignment vector. }
+\item{sigma.tot}{ The total variance of the potential outcomes. }
+\item{n.avg}{ The mean of the number of treated observations by cluster. }
 }
 \description{
 This function calculates the parameters needed for the method to calculate sample size

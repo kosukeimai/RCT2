@@ -26,7 +26,7 @@ Calsamplesize(mu, n, qa, pa, r, sigma = 1, alpha = 0.05, beta = 0.2)
 }
 \value{
 A list of class \code{sampleSRE} which contains the following item:
-\item{samplesize}{ A list of the calculated necessary sample sizes in order to detect a specific alternative with a given power at a given significance level. }
+\item{samplesize}{ A list of the calculated necessary nubmer of clusters for each assignment mechanism in order to detect a specific alternative with a given power at a given significance level. }
 }
 \description{
 This function calculates the sample size needed to detect a specific alternative hypothesis with a given power at a given significance level.

@@ -20,7 +20,8 @@
 #' \item{sigmaw}{ The within-cluster variance of the potential outcomes, with the assumption that the all of the variances the same. }
 #' \item{sigmab}{ The between-cluster variance of the potential outcomes, with the assumption that all of the variances are the same. }
 #' \item{r}{ The intraclass correlation coefficient with respect to the potential outcomes. }
-#' \item{n.avg}{ The mean of the treatment assignment vector. }
+#' \item{sigma.tot}{ The total variance of the potential outcomes. }
+#' \item{n.avg}{ The mean of the number of treated observations by cluster. }
 #' 
 #' 
 #' @author Kosuke Imai, Department of Statistics, Harvard University
@@ -80,7 +81,7 @@ calpara <- function(Z,A,Y){
   sigmaw <- mean(est.sigmaj)
   sigmab <- mean(c(sigmab1,sigmab0))- mean(1/n1-1/n)* sigmaw
 
-  return(list(sigmaw = sigmaw,sigmab = sigmab,r=sigmab/(sigmab+sigmaw), n.avg = mean(n)))
+  return(list(sigmaw = sigmaw,sigmab = sigmab,r=sigmab/(sigmab+sigmaw), sigma.tot = sigmab+sigmaw, n.avg = mean(n)))
 
 }
 

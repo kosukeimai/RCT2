@@ -22,7 +22,7 @@
 #' @param n The cluster size (assuming that they are all equal).
 #' 
 #' @return A list of class \code{sampleSRE} which contains the following item:
-#' \item{samplesize}{ A list of the calculated necessary sample sizes in order to detect a specific alternative with a given power at a given significance level. }
+#' \item{samplesize}{ A list of the calculated necessary nubmer of clusters for each assignment mechanism in order to detect a specific alternative with a given power at a given significance level. }
 #'
 #' 
 #' 
@@ -49,7 +49,7 @@
 
 
 
-Calsamplesize = function (mu,n,qa, pa, r, sigma=1, alpha=0.05, beta=0.2){  
+Calsamplesize <- function (mu,n,qa, pa, r, sigma=1, alpha=0.05, beta=0.2){  
   m <-  length(qa)  
   D0 <-  array(0,dim=c(2*m,2*m))
   
