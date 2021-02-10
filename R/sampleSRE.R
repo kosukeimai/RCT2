@@ -97,5 +97,6 @@ Calsamplesize <- function (mu,n,qa, pa, r, sigma=1, alpha=0.05, beta=0.2){
   J.SE <-  s3*sigma/quadprogSE(C3 %*% D0 %*% t(C3))/mu^2
   
   samplesize <-  c(J.DE,J.MDE,J.SE)
+  class(samplesize) <- "sample"
   return (samplesize)	    
 }

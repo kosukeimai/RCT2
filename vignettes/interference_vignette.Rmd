@@ -190,13 +190,11 @@ n.avg <- round(var.perm$n.avg)
 
 # calculate sample size for the permanent contract
 print("Permanent Contract:")
-round(Calsamplesize(0.03,n.avg,qa, pa, r=var.perm$r, sigma.perm, alpha=0.05, beta=0.2))
-save <- Calsamplesize(0.03,n.avg,qa, pa, r=var.perm$r, sigma.perm, alpha=0.05, beta=0.2)
-print(save)
+print(Calsamplesize(0.03,n.avg,qa, pa, r=var.perm$r, sigma.perm, alpha=0.05, beta=0.2))
 
 # calculate sample size for the long term fixed contract
-print("Long Term Fixed Contract")
-round(Calsamplesize(0.03,n.avg,qa, pa, r=var.LTFC$r, sigma.LTFC, alpha=0.05, beta=0.2))
+print("Long Term Fixed Contract:")
+print(Calsamplesize(0.03,n.avg,qa, pa, r=var.LTFC$r, sigma.LTFC, alpha=0.05, beta=0.2))
 ```
 
 From the results, we can see the necessary total number of clusters for each assignment mechanism with size `n.avg` needed to detect a specific alternative at a certain power and significance level.

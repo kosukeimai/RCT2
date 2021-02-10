@@ -3,6 +3,7 @@
 S3method(print,parametric)
 S3method(print,random)
 S3method(print,regression)
+S3method(print,sample)
 export(CADEparamreg)
 export(CADErand)
 export(CADEreg)
