@@ -15,26 +15,30 @@ CADErand(data, individual = 1, ci = 0.95)
 }
 \value{
 A list of class \code{CADErand} which contains the following items:
-\item{CADE1}{ The point estimate of CADE(1).  } \item{CADE0}{ The point estimate of CADE(0).  } 
-\item{CASE1}{ The point estimate of CASE(1).  } \item{CASE0}{ The point estimate of CASE(0).  } 
-\item{var.CADE1}{ The  variance estimate of CADE(1).   } 
-\item{var.CADE0}{ The  variance estimate of CADE(0).   } 
-\item{var.CASE1}{ The  variance estimate of CASE(1).   } 
-\item{var.CASE0}{ The  variance estimate of CASE(0).   } 
-\item{DEY1}{ The point estimate of DEY(1).  } \item{DEY0}{ The point estimate of DEY(0).  } 
-\item{DED1}{ The point estimate of DED(1).  } \item{DED0}{ The point estimate of DED(0).  } 
-\item{var.DEY1}{ The  variance estimate of DEY(1).   } 
-\item{var.DEY0}{ The  variance estimate of DEY(0).   } 
-\item{var.DED1}{ The  variance estimate of DED(1).   } 
-\item{var.DED0}{ The  variance estimate of DED(0).   } 
-\item{SEY1}{ The point estimate of SEY(1).  } \item{SEY0}{ The point estimate of SEY(0).  } 
-\item{SED1}{ The point estimate of SED(1).  } \item{SED0}{ The point estimate of SED(0).  } 
-\item{var.SEY1}{ The  variance estimate of SEY(1).   } 
-\item{var.SEY0}{ The  variance estimate of SEY(0).   } 
-\item{var.SED1}{ The  variance estimate of SED(1).   } 
-\item{var.SED0}{ The  variance estimate of SED(0).   } 
-\item{NADE1}{ The point estimate of NADE(1).  } \item{NADE0}{ The point estimate of NADE(0).  }
-\item{NASE1}{ The poinst estimate of NASE(1).  } \item{NASE0}{ The point estimate of NADE(0).  }
+\item{CADE}{ The point estimates of the CADE for each assignment mechanism.  }
+\item{CASE}{ The point estimate of CASE for each assignment mechanism.  } 
+\item{var.CADE1}{ The  variance estimate of CADE for each assignment mechanism.   } 
+\item{var.CASE1}{ The  variance estimate of CASE for each assignment mechanism.   } 
+\item{DEY1}{ The point estimate of DEY for each assignment mechanism.  }
+\item{DED1}{ The point estimate of DED for each assignment mechanism.  }
+\item{var.DEY1}{ The  variance estimate of DEY for each assignment mechanism.   } 
+\item{var.DED1}{ The  variance estimate of DED for each assignment mechanism.   } 
+\item{SEY1}{ The point estimate of SEY for each pairwise groups of assignment mechanisms.  } 
+\item{SED1}{ The point estimate of SED for each pairwise groups of assignment mechanisms.  }
+\item{var.SEY1}{ The  variance estimate of SEY for each pairwise groups of assignment mechanisms.   } 
+\item{var.SED1}{ The  variance estimate of SED for each pairwise groups of assignment mechanisms.   } 
+\item{lci.CADE}{ The left endpoint for the confidence intervals for the CADE from each assignment mechanism. }
+\item{rci.CADE}{ The right endpoint for the confidence intervals for the CADE from each assignment mechanism. }
+\item{lci.CASE}{ The left endpoint for the confidence intervals for the CASE from each assignment mechanism. }
+\item{rci.CASE}{ The left endpoint for the confidence intervals for the CASE from each assignment mechanism. }
+\item{lci.DEY}{ The left endpoint for the confidence intervals for the DEY from each assignment mechanism. }
+\item{rci.DEY}{ The left endpoint for the confidence intervals for the DEY from each assignment mechanism. }
+\item{lci.SEY}{ The left endpoint for the confidence intervals for the SEY from each pairwise groups of assignment mechanisms. }
+\item{rci.SEY}{ The left endpoint for the confidence intervals for the SEY from each pairwise groups of assignment mechanism. }
+\item{lci.DED}{ The left endpoint for the confidence intervals for the DED from each assignment mechanism. }
+\item{rci.DED}{ The left endpoint for the confidence intervals for the DED from each assignment mechanism. }
+\item{lci.SED}{ The left endpoint for the confidence intervals for the SED from each pairwise groups of assignment mechanism. }
+\item{rci.SED}{ The left endpoint for the confidence intervals for the SED from each pairwise groups of assignment mechanism. }
 }
 \description{
 This function computes the point estimates and variance estimates of the complier average direct effect (CADE)  and the complier average spillover effect (CASE).

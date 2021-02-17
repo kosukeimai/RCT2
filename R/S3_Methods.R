@@ -54,18 +54,25 @@ print.regression <- function(x, ...){
 #' @export
 #' @method print random
 print.random <- function(x, ...){
-  variance <- c(x$var.CADE1, x$var.CADE0, x$var.CASE1, x$var.CASE0,x$var.DEY1, x$var.DEY0, x$var.DED1, x$var.DED0, x$var.SEY1, x$var.SEY0, x$var.SED1, x$var.SED0)
+  variance <- c(x$var.CADE, x$var.CASE, x$var.DEY, x$var.DED, x$var.SEY, x$var.SED)
   stds <- sqrt(variance)
-  estimate <- c(x$CADE1, x$CADE0, x$CASE1, x$CASE0, x$DEY1, x$DEY0, x$DED1, x$DED0, x$SEY1, x$SEY0, x$SED1, x$SED0)
-  name <- c("CADE1", "CADE0", "CASE1", "CASE0", "DEY1", "DEY0", "DED1", "DED0", "SEY1", "SEY0", "SED1", "SED0")
+  estimate <- c(x$CADE, x$CASE, x$DEY, x$DED, x$SEY, x$SED)
   
+  
+  name <- c("CADE", "CASE", "DEY", "DED", "SEY", "SED")
+  names <- rep(name, each = length(x$CADE))
+  reps <- seq(0, length(x$CASE)-1, 1)
+  reps2 <- rep(reps, times = length(name))
+
   variance <- round(variance, 5)
   stds <- round(stds, 5)
   estimate <- round(estimate, 5)
-  lcis <- c(x$lci.CADE1, x$lci.CADE0, x$lci.CASE1, x$lci.CASE0, x$lci.DEY0, x$lci.DEY1, x$lci.SEY0, x$lci.SEY1, x$lci.DED0, x$lci.DED1, x$lci.SED0, x$lci.SED1)
-  rcis <- c(x$rci.CADE1, x$rci.CADE0, x$rci.CASE1, x$rci.CASE0, x$rci.DEY0, x$rci.DEY1, x$rci.SEY0, x$rci.SEY1, x$rci.DED0, x$rci.DED1, x$rci.SED0, x$rci.SED1)
-  
-  out <- as.data.frame(cbind(name, estimate, variance, stds, lcis, rcis))
+  lcis <- c(x$lci.CADE, x$lci.CASE, x$lci.DEY, x$lci.SEY, x$lci.DED, x$lci.SED)
+  rcis <- c(x$rci.CADE,x$rci.CASE, x$rci.DEY, x$rci.SEY, x$rci.DED, x$rci.SED)
+ 
+
+  out <- as.data.frame(cbind(names, reps2, estimate, variance, stds, lcis, rcis))
+  rownames(out) <- NULL
   return(out)
 }
 
