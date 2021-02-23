@@ -12,14 +12,12 @@
 #' For the details of the method implemented by this function, see the
 #' references.
 #' 
+#' @param data A data frame containing the relevant variables. The names for the variables should be ``Z'' for the treatment assignment, ``Y'' for the treatment outcome, ``A'' for the treatment assignment mechanism, and ``id'' for the cluster ID. The variable for the cluster ID should be a factor.
+
 #' @param mu The effect size (i.e. the largest direct effect across treatment assignment mechanisms).
-#' @param sigma The total variance of the potnetial outcomes (default 1).
 #' @param qa The proportions of different treatment assignment mechanisms.
-#' @param pa The treated proportion under different treatment assignment mechanisms.
-#' @param r The intraclass correlation coefficient with respect to the potential outcomes. 
 #' @param alpha The given significance level (default 0.05).
 #' @param beta The given power level (default 0.2).
-#' @param n The cluster size (assuming that they are all equal).
 #' 
 #' @return A list of class \code{sampleSRE} which contains the following item:
 #' \item{samplesize}{ A list of the calculated necessary nubmer of clusters for each assignment mechanism in order to detect a specific alternative with a given power at a given significance level. }
@@ -35,7 +33,7 @@
 #' @references Zhichao Jiang, Kosuke Imai (2020).
 #' \dQuote{Statistical Inference and Power Analysis for Direct and Spillover Effects in Two-Stage Randomized Experiments}, \emph{Technical Report}.
 #' @keywords two-stage randomized experiments
-#' @name calsamplesize
+#' @name Calsamplesize
 #' @import stats
 #' @import quadprog
 #' 
@@ -49,7 +47,15 @@
 
 
 
-Calsamplesize <- function (mu,n,qa, pa, r, sigma=1, alpha=0.05, beta=0.2){  
+Calsamplesize <- function (data, mu, qa, alpha=0.05, beta=0.2){  
+  
+  var_data <- calpara(data)
+  r <- var_data$r
+  sigma <- var_data$sigma.tot
+  pa <- sort(unique(data$A))
+  n <- round(var_data$n.avg)
+  
+  
   m <-  length(qa)  
   D0 <-  array(0,dim=c(2*m,2*m))
   
@@ -98,5 +104,5 @@ Calsamplesize <- function (mu,n,qa, pa, r, sigma=1, alpha=0.05, beta=0.2){
   
   samplesize <-  c(J.DE,J.MDE,J.SE)
   class(samplesize) <- "sample"
-  return (samplesize)	    
+  return (samplesize)   
 }

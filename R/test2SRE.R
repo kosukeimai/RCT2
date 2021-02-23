@@ -14,9 +14,7 @@
 #' For the details of the method implemented by this function, see the
 #' references.
 #' 
-#' @param Z A vector of the treatment assignments.
-#' @param A A vector of treatment assignment mechanisms. 
-#' @param Y A vector of potential outcomes.
+#' @param data A data frame containing the relevant variables. The names for the variables should be ``Z'' for the treatment assignment, ``Y'' for the treatment outcome, ``A'' for the treatment assignment mechanism, and ``id'' for the cluster ID. The variable for the cluster ID should be a factor.
 #' @param effect Specify which null hypothesis to be tested. ``DE'' for direct effect, ``ME'' for marginal effect, and ``SE'' for spillover effect.
 #' @param alpha The level of significance at which the test is to be run (default is 0.05).
 #' @return A list of class \code{Test2SRE} which contains the following item:
@@ -39,12 +37,33 @@
 
 
 ### Testing the hypotheses of DE=0,MDE=0, SE=0 
-Test2SRE <- function(Z, A, Y,effect = "DE", alpha = 0.05){
+Test2SRE <- function(data,effect = "DE", alpha = 0.05){
+  ### change the format of the vectors to lists
+  clusters <- unique(data$id)
+  n.clusters <- length(clusters)
+  
+  Z <- vector("list", n.clusters)
+  Y <- vector("list", n.clusters)
+  A <- numeric(n.clusters)
+  
+  for(i in 1:n.clusters){
+    Z[[i]] <- data$Z[data$id == clusters[i]]
+    Y[[i]] <- data$Y[data$id == clusters[i]]
+  }
+  
+  
+  for(i in 1:n.clusters){
+    A[i] <- data$A[data$id==clusters[i]][1]
+  }
+  
+  A <- as.numeric(factor(A))
+  
+  
   ### format the data
   Ja <- table(A)
   J <- sum(Ja)
   qa <- Ja/J
-  est <-  CalAPO(Z,A,Y)
+  est <-  CalAPO(data)
   m <- length(Ja)
   C1 <-  array(0,dim=c(m,2*m))
   C2 <-  rep(0,2*m)

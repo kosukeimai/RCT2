@@ -4,14 +4,10 @@
 \alias{CalAPO}
 \title{Point Estimation and Variance for the unit-level direct effect (ADE), marginal direct effect (MDE), and unit level spillover effect (ASE)}
 \usage{
-CalAPO(Z, A, Y)
+CalAPO(data)
 }
 \arguments{
-\item{Z}{A vector of the treatment assignments.}
-
-\item{A}{A vector of treatment assignment mechanisms.}
-
-\item{Y}{A vector of potential outcomes.}
+\item{data}{A data frame containing the relevant variables. The names for the variables should be ``Z'' for the treatment assignment, ``Y'' for the treatment outcome, ``A'' for the treatment assignment mechanism, and ``id'' for the cluster ID. The variable for the cluster ID should be a factor.}
 }
 \value{
 A list of class \code{CalAPO} which contains the following items:

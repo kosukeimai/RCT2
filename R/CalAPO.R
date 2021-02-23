@@ -15,9 +15,7 @@
 #' For the details of the method implemented by this function, see the
 #' references.
 #' 
-#' @param Z A vector of the treatment assignments.
-#' @param A A vector of treatment assignment mechanisms. 
-#' @param Y A vector of potential outcomes.
+#' @param data A data frame containing the relevant variables. The names for the variables should be ``Z'' for the treatment assignment, ``Y'' for the treatment outcome, ``A'' for the treatment assignment mechanism, and ``id'' for the cluster ID. The variable for the cluster ID should be a factor.
 
 #' @return A list of class \code{CalAPO} which contains the following items:
 #' \item{Y.hat}{ Estimate of the average potential outcomes. }
@@ -45,7 +43,27 @@
 #' @export CalAPO
 
 
-CalAPO <- function (Z, A, Y){
+CalAPO <- function (data){
+  ### change the format of the vectors to lists
+  clusters <- unique(data$id)
+  n.clusters <- length(clusters)
+  
+  Z <- vector("list", n.clusters)
+  Y <- vector("list", n.clusters)
+  A <- numeric(n.clusters)
+  
+  for(i in 1:n.clusters){
+    Z[[i]] <- data$Z[data$id == clusters[i]]
+    Y[[i]] <- data$Y[data$id == clusters[i]]
+  }
+  
+  
+  for(i in 1:n.clusters){
+    A[i] <- data$A[data$id==clusters[i]][1]
+  }
+  
+  A <- as.numeric(factor(A))
+  
   ### format the data
   Ja <- table(A)
   J <- sum(Ja)

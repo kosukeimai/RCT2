@@ -61,87 +61,26 @@ library(RCT2)
 data <- RCT2::jd
 ```
 
-### ZSRE and YSRE
-If the data is not already pre-processed, the `ZSRE` and `YSRE` functions can be run to output the necessary format for the binary treatment assignment variable (`Z`) and the vector of outcomes (`Y`) for any desired variable of interest respectively. The inputs for `ZSRE` are the binary assignment vector and the vector of cluster labels. The inputs for `YSRE` are the vector of cluster labels and the outcomes of the variable of interest.
-
-In this case, we are interested in long-term fixed contracts and permanent contracts. We acquire the necessary binary treatment assignment variable as follows:
-
-```{r}
-Z <- ZSRE(data$assigned, data$anonale)
-```
-
-We can acquire the necessary list of outcomes `Y` as follows:
-
-```{r}
-Y.LTFC <- YSRE(data$anonale, data$cdd6m)
-Y.perm <- YSRE(data$anonale, data$cdi)
-```
-
 
 ### CalAPO
 In order to calculate a list of point estimates and variances for an effect of interest, run the `CalAPO` command. It is necessary first to create the vector of treatment assignments, `A`, which will depend on the study design. In this experiment, there are three treatment assignment mechanisms with treated probabilities 25\%, 50\%, and 75\% respectively. 
 
 
-```{r, include = F}
-# #Change the data format to vectors of lists
-# lea.label <- unique(data$anonale)
-# # ## total number of clusters
-# n.lea <- length(lea.label)
-# Z <- vector("list", n.lea)
-# Y.salary <- vector("list", n.lea)
-# Y.LTFC <- vector("list", n.lea)
-# Y.LT <- vector("list", n.lea)
-# Y.perm <- vector("list", n.lea)
-# 
-# for ( i in 1:n.lea){
-#    Z[[i]] <- data$assigned[data$anonale == lea.label[i]]
-#  #
-#  #   ## salary    0  for unemployed
-#    Y.salary[[i]] <- data$salaire[data$anonale == lea.label[i]]
-#    Y.salary[[i]] <- ifelse(is.na(Y.salary[[i]]),0,Y.salary[[i]])
-# 
-#    ## LTFC or permanent contract
-#    Y.LT[[i]] <- data$emploidur[data$anonale == lea.label[i]]
-#    ## long-term fixed contract
-#    Y.LTFC[[i]] <- data$cdd6m[data$anonale == lea.label[i]]
-#     ## permanent contract
-#    Y.perm[[i]] <- data$cdi[data$anonale == lea.label[i]]
-# }
-#  #
-#  
-#  ## treatment assignment mechanism
- # A <- numeric(n.lea)
- # for (i in 1:n.lea){
- #   if (  data$pct0[data$anonale==lea.label[i]][1]== 0.25){A[i] <- 1}
- #   if (  data$pct0[data$anonale==lea.label[i]][1]== 0.5){A[i] <- 2}
- #   if (  data$pct0[data$anonale==lea.label[i]][1]== 0.75){A[i] <- 3}
- # }
-```
-
-
-
-```{r}
-lea.label <- unique(data$anonale)
-n.lea <- length(lea.label)
-A <- numeric(n.lea)
- for (i in 1:n.lea){
-   if (  data$pct0[data$anonale==lea.label[i]][1]== 0.25){A[i] <- 1}
-   if (  data$pct0[data$anonale==lea.label[i]][1]== 0.5){A[i] <- 2}
-   if (  data$pct0[data$anonale==lea.label[i]][1]== 0.75){A[i] <- 3}
- }
-```
-
 
 Then, run the `CalAPO` command, which takes in the vector of treatment assignments, the assignment mechanism vector, and the vector of outcomes for the variable of interest which is `Y.LTFC` in this case. We see that the estimated average potential outcome for long-term fixed contracts is given by `Y.hat`. As stated in the paper, we also have the results for the estimated direct effects under the three treatment mechanisms (`ADE.est`), the estimated marginal direct effect (`MDE.est`), and the estimated spillover effects (`ASE.est`). We also have the estimated covariance matrices for the average potential outcomes, the estimated direct effect, estimated marginal effect, and estimated spillover effects.
 
 ```{r}
-CalAPO(Z,A,Y.LTFC)
+data_LTFC <- data.frame(data$assigned, data$pct0, data$cdd6m, data$anonale)
+colnames(data_LTFC) <- c("Z", "A", "Y", "id")
+CalAPO(data_LTFC)
 ```
 
 Similarly, we can run this on the permanent contracts.
 
 ```{r}
-CalAPO(Z, A, Y.perm)
+data_perm <- data.frame(data$assigned, data$pct0, data$cdi, data$anonale)
+colnames(data_perm) <- c("Z", "A", "Y", "id")
+CalAPO(data_perm)
 ```
 
 
@@ -149,27 +88,22 @@ CalAPO(Z, A, Y.perm)
 We can also perform hypothesis tests on this data by using the `Test2SRE` function. THE `Test2SRE` function takes in `Z`, `A`, `Y`, as before, and also takes in an extra argument `effect`, where the desired effect should be specified (either ADE for direct effect, MDE for marginal direct effect, or ASE for spillover effect). The function returns `TRUE` if the hypothesis should be rejected, and `FALSE` otherwise. The default significance level is set to 0.05, but may be changed by altering the `alpha` argument.
 
 ```{r}
-Test2SRE(Z,A,Y.LTFC,effect="MDE", alpha=0.05)
+Test2SRE(data_LTFC, effect="MDE", alpha=0.05)
 ```
 
 ### Calpara and Calsamplesize  
-Lastly, we can perform sample size calculations for the sample size needed for a given power at a given significance level. First, we call the `calpara` function to calculate the necessary parameters for the sample size calculation, including the within-class and between class variances and the intra-class correlation coefficient. The effect size and the assignment mechanism also need to be specified based on the study design. In this case, `mu` is the effect size, `pa` is the assignment mechanisms, and `qa` is the vector of probabilities of being assigned to one of the three assignment mechanisms.
+Lastly, we can perform sample size calculations for the sample size needed for a given power at a given significance level. First, we call the `calpara` function to calculate the necessary parameters for the sample size calculation, including the within-class and between class variances and the intra-class correlation coefficient. The effect size and the assignment mechanism also need to be specified based on the study design. In this case, `mu` is the effect size and `qa` is the vector of probabilities of being assigned to one of the three assignment mechanisms.
 
-```{r}
-### effect size and assignment mechanism
-mu <- 0.05
-pa <- c( 0.25,0.50, 0.75)
-qa <- rep(1/3,3)
-
-```
 
 Then, call the `calpara` command to calculate the within-class and between class variances, and the intra-class correlation coefficient.
 
 ```{r}
-# calculate parameters for permanent contract
-var.perm <- calpara(Z,A,Y.perm)
-# calculate parameters for long term fixed contract
-var.LTFC <- calpara(Z,A,Y.LTFC)
+# calculate variances for permanent contract
+var.perm <- calpara(data_perm)
+
+
+# calculate variances for long term fixed contract
+var.LTFC <- calpara(data_LTFC)
 ```
 
 The elements of the output of `calpara` can be accessed as below. For example, to retrieve the total variance of the potential outcomes for the permanent contracts and long-term fixed contracts, the following code can be run:
@@ -182,19 +116,21 @@ sigma.LTFC <- var.LTFC$sigma.tot
 
 
 
-Then, we specify the effect size and use the `Calsamplesize` function to calculate the appropriate sample sizes for the permanent contract and the LTFC. The default `alpha`(significance level) and `beta` (power) are set at 0.05 and 0.2 respectively. The output of `n.avg` may need to be rounded, in order to have it be integer valued.
+Then, we specify the effect size and use the `Calsamplesize` function to calculate the appropriate sample sizes for the permanent contract and the LTFC. The default `alpha`(significance level) and `beta` (power) are set at 0.05 and 0.2 respectively.
 
 ```{r}
-# round n.avg
-n.avg <- round(var.perm$n.avg)
+### effect size and assignment mechanism
+mu <- 0.03
+qa <- rep(1/3,3)
 
 # calculate sample size for the permanent contract
 print("Permanent Contract:")
-print(Calsamplesize(0.03,n.avg,qa, pa, r=var.perm$r, sigma.perm, alpha=0.05, beta=0.2))
+print(Calsamplesize(data_LTFC, 0.03, qa, 0.05, 0.2))
+
 
 # calculate sample size for the long term fixed contract
 print("Long Term Fixed Contract:")
-print(Calsamplesize(0.03,n.avg,qa, pa, r=var.LTFC$r, sigma.LTFC, alpha=0.05, beta=0.2))
+print(Calsamplesize(data_perm, 0.03, qa, alpha=0.05, beta=0.2))
 ```
 
 From the results, we can see the necessary total number of clusters for each assignment mechanism with size `n.avg` needed to detect a specific alternative at a certain power and significance level.

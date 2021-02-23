@@ -91,9 +91,6 @@ CADErand<-function(data,individual=1, ci = 0.95){
   }
   
 
-  
-  
-  ### GOOD GENERAL CASE CODE BELOW
   # for the case z=0
   # first column is est.Dj00, second column is est.Dj01 if A = {1, ..., n} then the ith column would be est.Dj0i
   A2 <- factor(A)
@@ -245,7 +242,6 @@ CADErand<-function(data,individual=1, ci = 0.95){
   std.DED <- sqrt(var.DED)
   std.SED <- sqrt(var.SED)
   
-  #### original code #####
   
   # right confidence intervals 
   level <- qnorm((1-ci)/2, 0, 1)

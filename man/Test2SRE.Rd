@@ -4,14 +4,10 @@
 \alias{Test2SRE}
 \title{Hypothesis testing for three null hypotheses}
 \usage{
-Test2SRE(Z, A, Y, effect = "DE", alpha = 0.05)
+Test2SRE(data, effect = "DE", alpha = 0.05)
 }
 \arguments{
-\item{Z}{A vector of the treatment assignments.}
-
-\item{A}{A vector of treatment assignment mechanisms.}
-
-\item{Y}{A vector of potential outcomes.}
+\item{data}{A data frame containing the relevant variables. The names for the variables should be ``Z'' for the treatment assignment, ``Y'' for the treatment outcome, ``A'' for the treatment assignment mechanism, and ``id'' for the cluster ID. The variable for the cluster ID should be a factor.}
 
 \item{effect}{Specify which null hypothesis to be tested. ``DE'' for direct effect, ``ME'' for marginal effect, and ``SE'' for spillover effect.}
 

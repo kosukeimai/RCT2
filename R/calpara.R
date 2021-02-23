@@ -11,10 +11,7 @@
 #' This function calculates the parameters needed for the method to calculate sample size
 #' references.
 #' 
-#' 
-#' @param Z A vector of the treatment assignments.
-#' @param A A vector of treatment assignment mechanisms. 
-#' @param Y A vector of potential outcomes.
+#' @param data A data frame containing the relevant variables. The names for the variables should be ``Z'' for the treatment assignment, ``Y'' for the treatment outcome, ``A'' for the treatment assignment mechanism, and ``id'' for the cluster ID. The variable for the cluster ID should be a factor.
 #' 
 #' @return A list of class \code{calpara} which contains the following item:
 #' \item{sigmaw}{ The within-cluster variance of the potential outcomes, with the assumption that the all of the variances the same. }
@@ -42,7 +39,28 @@
 #' 
 
 
-calpara <- function(Z,A,Y){
+calpara <- function(data){
+  ### change the format of the vectors to lists
+  clusters <- unique(data$id)
+  n.clusters <- length(clusters)
+  
+  Z <- vector("list", n.clusters)
+  Y <- vector("list", n.clusters)
+  A <- numeric(n.clusters)
+  
+  for(i in 1:n.clusters){
+    Z[[i]] <- data$Z[data$id == clusters[i]]
+    Y[[i]] <- data$Y[data$id == clusters[i]]
+  }
+  
+  
+  for(i in 1:n.clusters){
+    A[i] <- data$A[data$id==clusters[i]][1]
+  }
+  
+  A <- as.numeric(factor(A))
+  
+  
   # number of clusters
   n.lea <- length(A)
 
