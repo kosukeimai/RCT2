@@ -41,17 +41,7 @@ Test2SRE <- function(data,effect = "DE", alpha = 0.05){
   ### change the format of the vectors to lists
   clusters <- unique(data$id)
   n.clusters <- length(clusters)
-  
-  Z <- vector("list", n.clusters)
-  Y <- vector("list", n.clusters)
   A <- numeric(n.clusters)
-  
-  for(i in 1:n.clusters){
-    Z[[i]] <- data$Z[data$id == clusters[i]]
-    Y[[i]] <- data$Y[data$id == clusters[i]]
-  }
-  
-  
   for(i in 1:n.clusters){
     A[i] <- data$A[data$id==clusters[i]][1]
   }

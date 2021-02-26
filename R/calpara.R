@@ -40,62 +40,53 @@
 
 
 calpara <- function(data){
-  ### change the format of the vectors to lists
+  data <- data[order(data$id), ]
   clusters <- unique(data$id)
+  # number of clusters
   n.clusters <- length(clusters)
   
-  Z <- vector("list", n.clusters)
-  Y <- vector("list", n.clusters)
+  
   A <- numeric(n.clusters)
-  
-  for(i in 1:n.clusters){
-    Z[[i]] <- data$Z[data$id == clusters[i]]
-    Y[[i]] <- data$Y[data$id == clusters[i]]
-  }
-  
-  
   for(i in 1:n.clusters){
     A[i] <- data$A[data$id==clusters[i]][1]
   }
-  
   A <- as.numeric(factor(A))
+  uniqueA <- length(unique(A))
   
+  est.Yj <-  array(dim=c(n.clusters,2))
+  est.sigmaj <- array(dim=c(n.clusters,2))
   
-  # number of clusters
-  n.lea <- length(A)
-
-  est.Yj <-  array(dim=c(n.lea,2))
-  est.sigmaj <- array(dim=c(n.lea,2))
-
-  for (j in 1:n.lea){
-    Z.sub <-  Z[[j]]
-    Y.sub <-  Y[[j]]
-    n1.sub <- sum(Z.sub)
-    n0.sub <- sum(1-Z.sub)
-    est.Yj[j,2] <- sum(Z.sub*Y.sub)/n1.sub
-    est.Yj[j,1] <- sum((1-Z.sub)*Y.sub)/n0.sub
-    est.sigmaj [j,2] <-   sum( (Y.sub-est.Yj[j,2])^2*Z.sub)/(n1.sub-1)
-    est.sigmaj [j,1] <-   sum( (Y.sub-est.Yj[j,1])^2*(1-Z.sub))/(n0.sub-1)
+  prod_ZY <- data$Z*data$Y
+  prod_1ZY <- (1-data$Z)*data$Y
+  
+  for (j in 1:n.clusters){
+    index <- which(data$id == clusters[j])
+    n1.sub <- sum(data$Z[index])
+    n0.sub <- sum(1-data$Z[index])
+    est.Yj[j, 2] <- sum(prod_ZY[index])/n1.sub
+    est.Yj[j, 1] <- sum(prod_1ZY[index])/n0.sub
+    est.sigmaj[j,2] <- sum( (data$Y[index]-est.Yj[j,2])^2*data$Z[index])/(n1.sub-1)
+    est.sigmaj[j,1] <- sum( (data$Y[index]-est.Yj[j,1])^2*(1-data$Z[index]))/(n0.sub-1)
   }
-
+  
   Ja <- table(A)
-
-  sigmab1 <- rep(-1,3)
-  sigmab0 <- rep(-1,3)
-  est.Y1 <-  rep(-1,3)
-  est.Y0 <-  rep(-1,3)
-
-  for ( a in 1:3){
+  
+  sigmab1 <- rep(-1,uniqueA)
+  sigmab0 <- rep(-1,uniqueA)
+  est.Y1 <-  rep(-1,uniqueA)
+  est.Y0 <-  rep(-1,uniqueA)
+  
+  for ( a in 1:uniqueA ){
     est.Y1[a] <- sum(est.Yj[,2]*(A==a))/Ja[a]
     sigmab1[a] <-     sum((est.Yj[,2]-est.Y1[a])^2*(A==a))/(Ja[a]-1)
     est.Y0[a] <- sum(est.Yj[,1]*(A==a))/Ja[a]
     sigmab0[a] <-     sum((est.Yj[,1]-est.Y0[a])^2*(A==a))/(Ja[a]-1)
   }
-
-  n1 <- sapply(Z,sum)
-  n <- sapply(Z,length)
-
-
+  
+  n1 <- tapply(data$Z, data$id, sum)
+  n <- tapply(data$Z, data$id, length)
+  
+  
   sigmaw <- mean(est.sigmaj)
   sigmab <- mean(c(sigmab1,sigmab0))- mean(1/n1-1/n)* sigmaw
 

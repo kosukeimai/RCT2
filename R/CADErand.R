@@ -59,63 +59,81 @@
 CADErand<-function(data,individual=1, ci = 0.95){
   ## transform the data into list 	
   ## transform the data into list 	
-  individual=1
-  ci = 0.95
-  if(!is.factor(data$id)){stop('The cluster_id should be a factor variable.')}
-  cluster.id<-unique(data$id)	
-  n.cluster<-length(cluster.id)	
-  Z<-vector("list", n.cluster) 	
-  D<-vector("list", n.cluster) 
-  Y<-vector("list", n.cluster) 
-  A<-rep(0,n.cluster)
-  for (i in 1:n.cluster){
-    Z[[i]]<-as.numeric(data$Z[data$id==cluster.id[i]])
-    D[[i]]<-as.numeric(data$D[data$id==cluster.id[i]])
-    Y[[i]]<-data$Y[data$id==cluster.id[i]]
-    if (length(unique(data$A[data$id==cluster.id[i]]))!=1){
-      stop( paste0('The assignment mechanism in cluster ',i,' should be the same.'))
-    }
-    A[i]<-data$A[data$id==cluster.id[i]][1]
+  data$id <- factor(data$id)
+  data <- data[order(data$id),]
+  
+  N <- length(data$id)
+  
+  cluster.id <- unique(data$id)	
+  n.cluster <- length(cluster.id)	
+  J <- n.cluster
+  
+  
+  individual <- 1
+  
+  # data frame of id and frequency of the id
+  freq <- data.frame( table(data$id) )
+  n <- freq$Freq
+  
+  merged <- merge(data, freq, by.x = "id", by.y = "Var1")
+  if(individual == 1){
+    merged$Y <- merged$Y * merged$Freq * n.cluster / N
+    merged$D <- merged$D * merged$Freq * n.cluster / N
+  }
+  
+  n.mech <- unique(merged$A)
+  n.amech <- length(n.mech)
+  
+  # full dataframe A
+  testA <- data.frame(factor(merged$A) )
+  A_mat <- model.matrix(~ . + 0, data=testA, contrasts.arg = lapply(testA, contrasts, contrasts=FALSE))
+  merged <- cbind(merged, A_mat)
+  
+  # A by cluster
+  A_index <- match(unique(merged$id), merged$id)
+  A_cluster <- factor(merged$A[A_index])
+  A_cluster_mat <- model.matrix(~A_cluster-1)
+  A_sums <- colSums(A_cluster_mat)
+  
+  A3 <- rep(0, n.cluster)
+  for(i in 1:n.cluster){
+    A3[i] <- merged$A[merged$id == cluster.id[i]][1]
+  }
+  
+  A4 <- matrix(0, nrow = n.cluster, ncol = n.amech)
+  for(i in 1:n.cluster){
+    mech <- A3[i]
+    A4[i, mech+1] <- 1
   }
   
   
   
-  n<-sapply(Z,length)
-  N<-sum(n)
-  J<-length(n)
-  if (individual==1){
-    for ( i in 1:n.cluster){
-      Y[[i]]<-Y[[i]]*n[i]*J/N
-      D[[i]]<-D[[i]]*n[i]*J/N
-    }
+  # common variable
+  Z_sum <- tapply(merged$Z, merged$id, sum)
+  
+  
+  
+  Dj0_init <- A_mat*(merged$D - merged$D*merged$Z)
+  Dj1_init <- A_mat*(merged$D*merged$Z)
+  Dj0 <- matrix(data = NA, nrow = n.cluster, ncol = n.amech)
+  Dj1 <- matrix(data = NA, nrow = n.cluster, ncol = n.amech)
+  for(i in 1:length(n.mech)){
+    Dj0[, i] <- tapply(Dj0_init[, i], merged$id, sum)/(n-Z_sum)
+    Dj1[, i] <- tapply(Dj1_init[, i], merged$id, sum)/Z_sum
   }
   
-
-  # for the case z=0
-  # first column is est.Dj00, second column is est.Dj01 if A = {1, ..., n} then the ith column would be est.Dj0i
-  A2 <- factor(A)
-  A_mat <- model.matrix(~A2-1)
   
-  prod_list_dz <- mapply('*', D, Z, SIMPLIFY = F)
-  init <- sapply(mapply('-', D, prod_list_dz, SIMPLIFY = F), sum)/(n-sapply(Z, sum))
+  # DED calculations
+  D0 <- t(as.data.frame(colSums(Dj0)/A_sums)) # this is est.D00 and est.D01
+  D1 <- t(as.data.frame(colSums(Dj1)/A_sums))
   
   
-  Dj0 <- init*A_mat # this is est.Dj00 and est.Dj01
   
-  # we do the same thing for the case z=1
-  Dj1init <- sapply(prod_list_dz,sum)/(sapply(Z,sum))
-  Dj1 <- Dj1init*A_mat # this is est.Dj10 and est.Dj11
-  
-  # next step up averaging analogous
-  # z = 0
-  D0 <- t(as.data.frame(colSums(Dj0)/colSums(A_mat))) # this is est.D00 and est.D01
-  D1 <- t(as.data.frame(colSums(Dj1)/colSums(A_mat))) # this is est.D10 and est.D11
-  
-  # analogous DED calculations 
-  DEDj <- Dj1-Dj0# this is est.DEDj0 and est.DEDj1
-  DED <- D1-D0 # this is est.DED0 and est.DED1
+  DEDj <- Dj1-Dj0 # this is est.DEDj0 and est.DEDj1
+  DED <- D1-D0
   
   
+  # spillover calculations
   lenSED <- ncol(A_mat)*(ncol(A_mat)-1)/2
   SED0 <- rep(0, lenSED)
   SED1 <- rep(0, lenSED)
@@ -126,42 +144,45 @@ CADErand<-function(data,individual=1, ci = 0.95){
   
   est.SED <- c(SED0, SED1)
   
+  
   # analogous variance calculations
-  est.xiDE <- colSums( (sweep(DEDj, 2, DED))^2*(A_mat))/(colSums(A_mat)-1) # est.xiDE0 and est.xiDE1
-  est.xib0 <- colSums( (sweep(Dj0, 2, D0))^2*A_mat)/(colSums(A_mat)-1) # est.xib00 and est.xib01
-  est.xib1 <- colSums( (sweep(Dj1, 2, D1))^2*A_mat)/(colSums(A_mat)-1) # est.xib10 and est.xib11
+  est.xiDE <- colSums( (sweep(DEDj, 2, DED))^2*A4)/(A_sums-1) # est.xiDE0 and est.xiDE1
+  est.xib0 <- colSums( (sweep(Dj0, 2, D0))^2*A4)/(A_sums-1) # est.xib00 and est.xib01
+  est.xib1 <- colSums( (sweep(Dj1, 2, D1))^2*A4)/(A_sums-1) # est.xib10 and est.xib11
   
-  
-  est.xij0 <- matrix(0, nrow=ncol(A_mat), ncol=J) # est.xij00 and est.xij01
-  est.xij1 <- matrix(0, nrow=ncol(A_mat), ncol=J) # est.xj10 and est.xij11
+  est.xij0 <- matrix(0, nrow=n.amech, ncol=J) # est.xij00 and est.xij01
+  est.xij1 <- matrix(0, nrow=n.amech, ncol=J) # est.xj10 and est.xij11
   
   for (j in 1:J){
     tmp1 <- Dj0[j, ]
-    tmp2 <- t( matrix( tmp1 , length(tmp1) , length(D[[j]]) ) )
-    est.xij0[, j] <- unlist(colSums((D[[j]] - tmp2)^2*(1-Z[[j]]))/(sum(1-Z[[j]])-1)) # est.xij00 and est.xij01
+    tmp2 <- t( matrix( tmp1 , length(tmp1) , n[j] ) )
+    tmp_subset <- subset(merged, id %in% freq$Var1[j])
+    D_temp <- tmp_subset$D
+    Z_temp <- tmp_subset$Z
+    est.xij0[, j] <- colSums((D_temp - tmp2)^2*(1-Z_temp))/(sum(1-Z_temp)-1) # est.xij00 and est.xij01
     
     tmp3 <- Dj1[j, ]
-    tmp4 <- t( matrix( tmp3 , length(tmp3) , length(D[[j]]) ) )
-    est.xij1[, j] <- unlist(colSums((D[[j]]-tmp4)^2*(Z[[j]]))/(sum(Z[[j]])-1)) # est.xj10 and est.xij11
+    tmp4 <- t( matrix( tmp3, length(tmp3), n[j] ) )
+    est.xij1[, j] <- colSums((D_temp - tmp4)^2*(Z_temp))/(sum(Z_temp) - 1)  
   }
   
-  Z_sum <- sapply(Z, sum)
-  n_Z_sum <- n-sapply(Z, sum)
   denom1 <- t(matrix( Z_sum , length(Z_sum) , nrow(est.xij0) ))
-  denom2 <- t(matrix( n_Z_sum , length(n_Z_sum) , nrow(est.xij0) ))
+  denom2 <- t(matrix( freq$Freq - Z_sum , length(Z_sum) , nrow(est.xij0) ))
   
-  var.DED <- est.xiDE*(1/colSums(A_mat)-1/J)+rowSums((est.xij0/denom2+est.xij1/denom1)*t(A_mat))/J/colSums(A_mat) # var.DED0 and var.DED1
-  var.SED1 <- sum(est.xib1/colSums(A_mat))
-  var.SED0 <- sum(est.xib0/colSums(A_mat))
+  var.DED <- est.xiDE*(1/A_sums-1/J)+rowSums((est.xij0/denom2+est.xij1/denom1)*t(A4))/J/A_sums # var.DED0 and var.DED1
+  var.SED1 <- sum(est.xib1/A_sums)
+  var.SED0 <- sum(est.xib0/A_sums)
   var.SED <- c(var.SED0, var.SED1)
-  prod_list_yz <- mapply('*', Y, Z, SIMPLIFY = F)
-  est.Yj0 <- sapply(mapply('-', Y, prod_list_yz, SIMPLIFY = FALSE), sum)/(n-sapply(Z, sum))*A_mat # est.Yj00 and est.Yj01
-  est.Yj1 <- sapply(prod_list_yz,sum)/(sapply(Z,sum))*A_mat # est.Yj10 and est.Yj11
-  est.Y0 <- colSums(est.Yj0*A_mat)/colSums(A_mat) # est.Y00 and est.Y01
-  est.Y1 <- colSums(est.Yj1*A_mat)/colSums(A_mat) # est.Y10 and est. Y11
+  
+  
+  est.Yj0 <- as.vector(tapply( (merged$Y - merged$Y*merged$Z), merged$id, sum)/(freq$Freq-Z_sum) )*A4
+  est.Yj1 <- as.vector( tapply( (merged$Y*merged$Z ), merged$id, sum) / Z_sum )*A4
+  
+  est.Y0 <- colSums(est.Yj0*A4)/A_sums # est.Y00 and est.Y01
+  est.Y1 <- colSums(est.Yj1*A4)/A_sums # est.Y10 and est. Y11
   est.DEYj <- est.Yj1-est.Yj0 # est.DEYj0 and est.DEYj1
   est.DEY <- est.Y1-est.Y0 # est.DEY0 and est.DEY1
-  lenSEY <- ncol(A_mat)*(ncol(A_mat)-1)/2
+  lenSEY <- ncol(A4)*(ncol(A4)-1)/2
   SEY0 <- rep(0, lenSEY) # this is est.SEY0
   SEY1 <- rep(0, lenSEY) # this is est.SEY1
   for(i in 2:lenSEY){
@@ -170,59 +191,61 @@ CADErand<-function(data,individual=1, ci = 0.95){
   }
   est.SEY <- c(SEY0, SEY1)
   
-  
-  
-  
   # variance for spillover effects
-  est.sigmaDE <- colSums((sweep(est.DEYj, 2, est.DEY ))^2*A_mat)/(colSums(A_mat)-1) # est.sigmaDEO and est.sigmaDE1
-  est.sigmab0 <- colSums((sweep( est.Yj0, 2, est.Y0 )) ^2*A_mat)/(colSums(A_mat)-1) # est.sigmab00 and sigmab01
-  est.sigmab1 <- colSums((sweep( est.Yj1,2, est.Y1))^2*A_mat)/(colSums(A_mat)-1) # est.sigmab10 and est.sigmab11
+  est.sigmaDE <- colSums((sweep(est.DEYj, 2, est.DEY ))^2*A4)/(A_sums-1) # est.sigmaDEO and est.sigmaDE1
+  est.sigmab0 <- colSums((sweep( est.Yj0, 2, est.Y0 )) ^2*A4)/(A_sums-1) # est.sigmab00 and sigmab01
+  est.sigmab1 <- colSums((sweep( est.Yj1, 2, est.Y1))^2*A4)/(A_sums-1) # est.sigmab10 and est.sigmab11
   est.sigmaj0 <- matrix(0, 2, J) # est.sigmaj00 and est.sigmaj01
   est.sigmaj1 <- matrix(0, 2, J) # est.sigmaj10 and est.sigma11
   
   for(j in 1:J){
     tmp1 <- est.Yj0[j, ]
-    tmp2 <- t( matrix( tmp1 , length(tmp1) , length(Y[[j]]) ) )
-    est.sigmaj0[, j] <- colSums((Y[[j]]-tmp2)^2*(1-Z[[j]]))/(sum(1-Z[[j]])-1)
+    tmp2 <- t( matrix( tmp1 , length(tmp1) , n[[j]] ) )
+    tmp_subset <- subset(merged, id %in% freq$Var1[j])
+    Y_temp <- tmp_subset$Y
+    Z_temp <- tmp_subset$Z
+    est.sigmaj0[, j] <- colSums((Y_temp-tmp2)^2*(1-Z_temp))/(sum(1-Z_temp)-1)
     
     tmp3 <- est.Yj1[j, ]
-    tmp4 <- t( matrix( tmp3 , length(tmp3) , length(Y[[j]]) ) )
-    est.sigmaj1[, j] <- colSums((Y[[j]]-tmp4)^2*(Z[[j]]))/(sum(Z[[j]])-1)
+    tmp4 <- t( matrix( tmp3 , length(tmp3) , n[[j]]) )
+    est.sigmaj1[, j] <- colSums((Y_temp-tmp4)^2*(Z_temp))/(sum(Z_temp)-1)
   }
   
-  
   # var.DEY0 and var.DEY1
-  var.DEY <- est.sigmaDE*(1/colSums(A_mat)-1/J)+rowSums( ( t(apply( est.sigmaj0, 1, "/", n-sapply(Z, sum)))+t(apply( est.sigmaj1, 1, "/", sapply(Z, sum))))*t(A_mat))/J/colSums(A_mat)
+  var.DEY <- est.sigmaDE*(1/A_sums-1/J)+rowSums((est.sigmaj0/denom2+est.sigmaj1/denom1)*t(A4))/J/A_sums # var.DED0 and var.DED1
+  
   # var.SEY0 and var.SEY1
-  var.SEY <- c(sum(est.sigmab0/colSums(A_mat)), sum(est.sigmab1/colSums(A_mat)))
+  var.SEY <- c(sum(est.sigmab0/A_sums), sum(est.sigmab1/A_sums))
   
   # analogous covariance calculations
-  est.zetaDE <- colSums( (est.DEYj-est.DEY)*( sweep(DEDj, 2, DED) )*(A_mat) )/(colSums(A_mat)-1) # est.zetaDE0 and est.zetaDE1
-  est.zetab0 <- colSums( (est.Yj0-est.Y0)*( sweep(Dj0, 2, D0))*(A_mat) )/(colSums(A_mat)-1) # est.zetab00 and est.zetab01
-  est.zetab1 <- colSums( (est.Yj1-est.Y1)*(sweep(Dj1, 2, D1 ))*(A_mat) )/(colSums(A_mat)-1) # est.zetab10 and est.zetab11
+  est.zetaDE <- colSums( (est.DEYj-est.DEY)*( sweep(DEDj, 2, DED) )*A4 )/(A_sums-1) # est.zetaDE0 and est.zetaDE1
+  est.zetab0 <- colSums( (est.Yj0-est.Y0)*( sweep(Dj0, 2, D0))*A4 )/(A_sums-1) # est.zetab00 and est.zetab01
+  est.zetab1 <- colSums( (est.Yj1-est.Y1)*(sweep(Dj1, 2, D1 ))*A4 )/(A_sums-1) # est.zetab10 and est.zetab11
   
   est.zetaj0 <- matrix(0, nrow=ncol(A_mat), ncol=J) # est.zetaj01 and est.zetaj01
   est.zetaj1 <- matrix(0, nrow=ncol(A_mat), ncol=J) # est.zetaj10 and est.zetaj11
   
   for(j in 1:J){
+    tmp_subset <- subset(merged, id %in% freq$Var1[j])
+    Y_temp <- tmp_subset$Y
+    Z_temp <- tmp_subset$Z
+    D_temp <- tmp_subset$D
     tmp1 <- Dj0[j, ]
     tmp2 <- est.Yj0[j, ]
-    tmp3 <- t( matrix(tmp1, length(tmp1), length(D[[j]])) )
-    tmp4 <- t( matrix( tmp2 , length(tmp2) , length(Y[[j]]) ) )
-    est.zetaj0[, j] <- colSums((Y[[j]]-tmp4)*(D[[j]]-tmp3)*(1-Z[[j]]))/(sum(1-Z[[j]])-1)
+    tmp3 <- t( matrix(tmp1, length(tmp1), n[j] ) )
+    tmp4 <- t( matrix( tmp2 , length(tmp2) , n[j] ) )
+    est.zetaj0[, j] <- colSums((Y_temp-tmp4)*(D_temp-tmp3)*(1-Z_temp))/(sum(1-Z_temp)-1)
     
     tmp5 <- Dj1[j, ]
     tmp6 <- est.Yj1[j, ]
-    tmp7 <- t( matrix(tmp5, length(tmp5), length(D[[j]])) )
-    tmp8 <- t( matrix( tmp6 , length(tmp6) , length(Y[[j]]) ) )
-    est.zetaj1[, j] <- colSums((Y[[j]]-tmp8)*(D[[j]]-tmp7)*(Z[[j]]))/(sum(Z[[j]])-1)
+    tmp7 <- t( matrix(tmp5, length(tmp5), n[j]) )
+    tmp8 <- t( matrix( tmp6 , length(tmp6) , n[j] ) )
+    est.zetaj1[, j] <- colSums((Y_temp-tmp8)*(D_temp-tmp7)*(Z_temp))/(sum(Z_temp)-1)
     
   }
   
-  est.zeta <- est.zetaDE*(1/colSums(A_mat)-1/J) + rowSums( (t(apply( est.zetaj0, 1, "/", n-sapply(Z, sum))) + t(apply( est.zetaj1, 1, "/",  sapply(Z, sum))))*t(A_mat) )/J/colSums(A_mat) 
-  est.zetab <- c(sum(est.zetab0/colSums(A_mat)) ,sum( est.zetab1/colSums(A_mat))) # est.zetab0 and est.zetab1
-  
-  
+  est.zeta <- est.zetaDE*(1/A_sums-1/J) + rowSums((est.zetaj0/denom2+est.zetaj1/denom1)*t(A4))/J/A_sums
+  est.zetab <- c(sum(est.zetab0/A_sums) ,sum( est.zetab1/A_sums)) # est.zetab0 and est.zetab1
   
   #### CADE and CASE
   est.CADE <- (est.DEY/DED) # est.CADE0 est.CADE1
@@ -242,8 +265,12 @@ CADErand<-function(data,individual=1, ci = 0.95){
   std.DED <- sqrt(var.DED)
   std.SED <- sqrt(var.SED)
   
+  #### original code #####
   
   # right confidence intervals 
+  ci <- 0.05
+  
+  
   level <- qnorm((1-ci)/2, 0, 1)
   rci.CADE <- round(est.CADE-level*est.stdCADE, 3)
   rci.CASE <- round(est.CASE-level*est.stdCASE, 3)

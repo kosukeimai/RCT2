@@ -55,14 +55,8 @@ CADEparamreg<-function(data, assign.prob, ci.level=0.95){
   if(!is.factor(data$id)){stop('The cluster_id should be a factor variable.')}
   cluster.id<-unique(data$id)	
   n.cluster<-length(cluster.id)	
-  Z<-vector("list", n.cluster) 	
-  D<-vector("list", n.cluster) 
-  Y<-vector("list", n.cluster) 
   A<-rep(0,n.cluster)
   for (i in 1:n.cluster){
-    Z[[i]]<-as.numeric(data$Z[data$id==cluster.id[i]])
-    D[[i]]<-as.numeric(data$D[data$id==cluster.id[i]])
-    Y[[i]]<-data$Y[data$id==cluster.id[i]]
     if (length(unique(data$A[data$id==cluster.id[i]]))!=1){
       stop( paste0('The assignment mechanism in cluster ',i,' should be the same.'))
     }
@@ -71,8 +65,9 @@ CADEparamreg<-function(data, assign.prob, ci.level=0.95){
   
   
   data<-data[!is.na(data$Y),]
-  n<-sapply(Z,length)
-  id.remove<- cluster.id[n-sapply(Z,sum)<=1 | sapply(Z,sum)<=1]
+  n <- tapply(data$Z, data$id, length)
+  Z_sum <- tapply(data$Z, data$id, sum)
+  id.remove<- cluster.id[n-Z_sum<=1 | Z_sum<=1]
   data<-data[!(data$id %in% id.remove),]
   
   

@@ -59,13 +59,13 @@ devtools::load_all(".")
 ```{r}
 library(RCT2)
 data <- RCT2::india
+data$id <- factor(data$id)
 ```
 
 
 ### CADErand
 To run the CADErand command, simply type in the following:
 ```{r}
-data$id <- factor(data$id)
 rand <- CADErand(data, 0.95) 
 print(rand)
 ```
@@ -73,8 +73,8 @@ print(rand)
 Note that you can specify the confidence interval level of your choosing with the parameter `ci` in the `CADErand` function. You will be able to access the output of the CADE randomization function using the print method:
 
 ```{r}
-rand$CADE1
-rand$CADE0
+rand$CADE
+rand$CASE
 ```
 
 ### CADEreg
