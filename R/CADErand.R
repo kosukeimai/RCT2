@@ -290,6 +290,14 @@ CADErand<-function(data,individual=1, ci = 0.95){
   
   lci.DED <- round(DED+level*std.DED, 3)
   lci.SED <- round(est.SED+level*std.SED, 3)
+  
+  rownames(est.CADE) <- NULL
+  rownames(est.varCADE) <- NULL
+  rownames(est.DEY) <- NULL
+  rownames(DED) <- NULL
+  rownames(var.DED) <- NULL
+  rownames(var.DEY) <- NULL
+
 
   
   output <- list(CADE = est.CADE, CASE = est.CASE, var.CADE = est.varCADE, var.CASE = est.varCASE,

@@ -35,8 +35,8 @@
 
 #' @method print regression
 print.regression <- function(x, ...){
-  CIs <- c(x$CADE1.CI, x$CADE0.CI)
-  CADEs <- c(x$CADE1, x$CADE0)
+  CIs <- rbind(x$CADE1.CI, x$CADE0.CI)
+  CADEs <- rbind(x$CADE1, x$CADE0)
   name <- c("CADE1", "CADE0")
   variances <- c("Cluster Robust Variance", "HC2 Variance", "Cluster Robust HC2 Variance", "Individual Variance", "Proposed Variance")
   cluster_robust_variance <- c(x$var1.clu, x$var0.clu)
@@ -48,6 +48,7 @@ print.regression <- function(x, ...){
   names(variance_values) <- c("var(CADE1)", "var(CADE0)")
   estimates <- as.data.frame(cbind(name, CADEs, CIs))
   rownames(estimates) <- NULL
+  colnames(estimates) <- c("name", "estimate", "left CI", "right CI")
   return(list(estimates, variance_values))
 }
 
