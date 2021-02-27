@@ -53,12 +53,14 @@
 #' \dQuote{Causal Inference with Interference and Noncompliance in the Two-Stage Randomized Experiments}, \emph{Technical Report}. Department of Politics, Princeton
 #' University.
 #' @keywords two-stage randomized experiments
+#' @importFrom magrittr %>%
+#' @importFrom dplyr select
+#' @importFrom utils head
+#' @importFrom rlang .data
 #' @export CADErand
 
 
 CADErand<-function(data,individual=1, ci = 0.95){
-  ## transform the data into list 	
-  ## transform the data into list 	
   data$id <- factor(data$id)
   data <- data[order(data$id),]
   
@@ -95,11 +97,11 @@ CADErand<-function(data,individual=1, ci = 0.95){
   A_cluster_mat <- model.matrix(~A_cluster-1)
   A_sums <- colSums(A_cluster_mat)
   
-  A3 <- rep(0, n.cluster)
-  for(i in 1:n.cluster){
-    A3[i] <- merged$A[merged$id == cluster.id[i]][1]
-  }
-  
+  merged_sub <- merged %>% dplyr::select(.data$id, .data$A)
+  A3 <- merged_sub[!duplicated(merged_sub$id), ]
+  A3 <- A3[order(A3$id),]
+  A3 <- A3$A
+
   A4 <- matrix(0, nrow = n.cluster, ncol = n.amech)
   for(i in 1:n.cluster){
     mech <- A3[i]

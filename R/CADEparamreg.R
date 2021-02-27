@@ -42,12 +42,15 @@
 #' @importFrom stats qnorm
 #' @importFrom stats lm
 #' @importFrom stats pt
+#' @importFrom magrittr %>%
+#' @importFrom dplyr select
 #' 
 #' @export CADEparamreg
 
 
 
 CADEparamreg<-function(data, assign.prob, ci.level=0.95){
+  data <- data
   ## validate ci.level
   if(ci.level>1){stop('Please specify the confidence interval as a decimal between 0 and 1.')}
   
@@ -55,15 +58,17 @@ CADEparamreg<-function(data, assign.prob, ci.level=0.95){
   if(!is.factor(data$id)){stop('The cluster_id should be a factor variable.')}
   cluster.id<-unique(data$id)	
   n.cluster<-length(cluster.id)	
-  A<-rep(0,n.cluster)
   for (i in 1:n.cluster){
     if (length(unique(data$A[data$id==cluster.id[i]]))!=1){
       stop( paste0('The assignment mechanism in cluster ',i,' should be the same.'))
     }
-    A[i]<-data$A[data$id==cluster.id[i]][1]
   }
   
-  
+  data_sub <- data %>% select(.data$id, .data$A)
+  A <- data_sub[!duplicated(data_sub$id), ]
+  A <- A[order(A$id),]
+  A <- A$A
+
   data<-data[!is.na(data$Y),]
   n <- tapply(data$Z, data$id, length)
   Z_sum <- tapply(data$Z, data$id, sum)

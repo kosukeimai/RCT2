@@ -37,50 +37,48 @@
 #' @references Zhichao Jiang, Kosuke Imai (2020).
 #' \dQuote{Statistical Inference and Power Analysis for Direct and Spillover Effects in Two-Stage Randomized Experiments}, \emph{Technical Report}.
 #' @keywords two-stage randomized experiments
-#' 
+#' @importFrom magrittr %>%
+#' @importFrom dplyr select
 #' @name CalAPO
 #' 
 #' @export CalAPO
 
 
 CalAPO <- function (data){
+  data <- data
+  data <- data[order(data$id), ]
   ### change the format of the vectors to lists
   clusters <- unique(data$id)
   n.clusters <- length(clusters)
+
   
-  Z <- vector("list", n.clusters)
-  Y <- vector("list", n.clusters)
-  A <- numeric(n.clusters)
-  
-  for(i in 1:n.clusters){
-    Z[[i]] <- data$Z[data$id == clusters[i]]
-    Y[[i]] <- data$Y[data$id == clusters[i]]
-  }
-  
-  
-  for(i in 1:n.clusters){
-    A[i] <- data$A[data$id==clusters[i]][1]
-  }
-  
+  # get the assignment mechanism
+  data_sub <- data %>% select(.data$id, .data$A)
+  A <- data_sub[!duplicated(data_sub$id), ]
+  A <- A[order(A$id),]
+  A <- A$A
   A <- as.numeric(factor(A))
   
   ### format the data
   Ja <- table(A)
-  J <- sum(Ja)
+  J <- sum(Ja) # same as n.clusters
   m <- length(Ja)
   
   #######  point estimators
-  n1 <- sapply(Z,sum)
-  n <- sapply(Z,length)
+  n1 <- tapply(data$Z, data$id, sum)
+  n <- tapply(data$Z, data$id, length)
   n0 <- n-n1
   
   Y1j.hat <- rep(0,J)
   Y0j.hat <- rep(0,J)
   
+  prod_YZ <- data$Y*data$Z
+  prod_Y1Z <- data$Y*(1-data$Z)
   
   for (j in 1:J){
-    Y1j.hat[j] <- sum(Y[[j]]*Z[[j]])/n1[j]
-    Y0j.hat[j] <- sum(Y[[j]]*(1-Z[[j]]))/n0[j]
+    id <- which(data$id == clusters[j])
+    Y1j.hat[j] <- sum(prod_YZ[id])/n1[j]
+    Y0j.hat[j] <- sum(prod_Y1Z[id])/n0[j]
     
   }
   
@@ -93,8 +91,8 @@ CalAPO <- function (data){
   }
   
   ## contrast matrix
-  m=3
-  qa <- rep(1/3,3)
+  m = length(unique(A))
+  qa <- rep(1/m, m)
   C1 = array(0,dim=c(m,2*m))
   C2 = rep(0,2*m)
   

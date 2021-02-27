@@ -33,6 +33,8 @@
 #' @name calpara
 #' @import stats
 #' @import quadprog
+#' @importFrom magrittr %>%
+#' @importFrom dplyr select
 #' 
 #' 
 #' @export calpara
@@ -40,16 +42,19 @@
 
 
 calpara <- function(data){
+  data <- data
   data <- data[order(data$id), ]
   clusters <- unique(data$id)
   # number of clusters
   n.clusters <- length(clusters)
   
   
-  A <- numeric(n.clusters)
-  for(i in 1:n.clusters){
-    A[i] <- data$A[data$id==clusters[i]][1]
-  }
+  
+  data_sub <- data %>% select(.data$id, .data$A)
+  A <- data_sub[!duplicated(data_sub$id), ]
+  A <- A[order(A$id),]
+  A <- A$A
+  
   A <- as.numeric(factor(A))
   uniqueA <- length(unique(A))
   

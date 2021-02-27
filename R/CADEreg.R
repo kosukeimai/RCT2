@@ -43,10 +43,14 @@
 #' \dQuote{Causal Inference with Interference and Noncompliance in the Two-Stage Randomized Experiments}, \emph{Technical Report}. Department of Politics, Princeton
 #' University.
 #' @keywords two-stage randomized experiments
+#' 
+#' @importFrom magrittr %>%
+#' @importFrom dplyr select
 #' @export CADEreg
 
 
 CADEreg=function(data, ci.level=0.95){
+  data <- data
   ## validate ci.level
   if(ci.level>1){stop('Please specify the confidence interval as a decimal between 0 and 1.')}
   if(!is.factor(data$id)){stop('The cluster_id should be a factor variable.')}
@@ -57,10 +61,11 @@ CADEreg=function(data, ci.level=0.95){
   n.cluster <- length(cluster.id)
   n <- tapply(data$Z, data$id, length)
   
-  A <- rep(0, n.cluster)
-  for(i in 1:n.cluster){
-    A[i] <- data$A[data$id == cluster.id[i]][1]
-  }
+  
+  data_sub <- data %>% select(.data$id, .data$A)
+  A <- data_sub[!duplicated(data_sub$id), ]
+  A <- A[order(A$id),]
+  A <- A$A
   
   W <- rep(0, length(data$id))
   J1 <- sum(A)
@@ -76,10 +81,9 @@ CADEreg=function(data, ci.level=0.95){
     index <- index.l[j]:index.r[j]
     Zj <- data$Z[data$id == cluster.id[j]]
     W[index] <- ifelse(A[j] == 1, 1/J1, 1/(n.cluster-J1)) * ifelse(Zj == 1, 1/n1[j], 1/n0[j])
-    # print(length(Zj))
-    # print(length(W[index]))
   }
-  # 
+
+  
   # ## Design matrix in the first stage
   A.reg <- data$A
   Z.reg <- data$Z

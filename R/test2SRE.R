@@ -31,20 +31,25 @@
 #' @references Zhichao Jiang, Kosuke Imai (2020).
 #' \dQuote{Statistical Inference and Power Analysis for Direct and Spillover Effects in Two-Stage Randomized Experiments}, \emph{Technical Report}.
 #' @keywords two-stage randomized experiments
-#' 
+#' @importFrom magrittr %>%
+#' @importFrom dplyr select
 #' 
 #' @export Test2SRE
 
 
 ### Testing the hypotheses of DE=0,MDE=0, SE=0 
 Test2SRE <- function(data,effect = "DE", alpha = 0.05){
+  data <- data
   ### change the format of the vectors to lists
   clusters <- unique(data$id)
   n.clusters <- length(clusters)
-  A <- numeric(n.clusters)
-  for(i in 1:n.clusters){
-    A[i] <- data$A[data$id==clusters[i]][1]
-  }
+  
+  
+  data_sub <- data %>% select(.data$id, .data$A)
+  A <- data_sub[!duplicated(data_sub$id), ]
+  A <- A[order(A$id),]
+  A <- A$A
+  
   
   A <- as.numeric(factor(A))
   
