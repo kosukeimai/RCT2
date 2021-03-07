@@ -33,8 +33,6 @@
 #' @name calpara
 #' @import stats
 #' @import quadprog
-#' @importFrom magrittr %>%
-#' @importFrom dplyr select
 #' 
 #' 
 #' @export calpara
@@ -43,17 +41,13 @@
 
 calpara <- function(data){
   data <- data
-  data <- data[order(data$id), ]
   clusters <- unique(data$id)
+  # data <- data[order(data$id), ]
   # number of clusters
   n.clusters <- length(clusters)
   
-  
-  
-  data_sub <- data %>% select(.data$id, .data$A)
-  A <- data_sub[!duplicated(data_sub$id), ]
-  A <- A[order(A$id),]
-  A <- A$A
+
+  A <- tapply(data$A, data$id, mean)
   
   A <- as.numeric(factor(A))
   uniqueA <- length(unique(A))
@@ -61,15 +55,17 @@ calpara <- function(data){
   est.Yj <-  array(dim=c(n.clusters,2))
   est.sigmaj <- array(dim=c(n.clusters,2))
   
-  prod_ZY <- data$Z*data$Y
-  prod_1ZY <- (1-data$Z)*data$Y
+  n1 <- tapply((1-data$Z), data$id, sum)
+  n0 <- tapply(data$Z, data$id, sum)
+  
+  est.Yj[,1] <- tapply((1-data$Z)*data$Y, data$id, sum)/n1
+  est.Yj[,2] <- tapply(data$Z*data$Y, data$id, sum)/n0
+
   
   for (j in 1:n.clusters){
     index <- which(data$id == clusters[j])
     n1.sub <- sum(data$Z[index])
     n0.sub <- sum(1-data$Z[index])
-    est.Yj[j, 2] <- sum(prod_ZY[index])/n1.sub
-    est.Yj[j, 1] <- sum(prod_1ZY[index])/n0.sub
     est.sigmaj[j,2] <- sum( (data$Y[index]-est.Yj[j,2])^2*data$Z[index])/(n1.sub-1)
     est.sigmaj[j,1] <- sum( (data$Y[index]-est.Yj[j,1])^2*(1-data$Z[index]))/(n0.sub-1)
   }
@@ -87,13 +83,12 @@ calpara <- function(data){
     est.Y0[a] <- sum(est.Yj[,1]*(A==a))/Ja[a]
     sigmab0[a] <-     sum((est.Yj[,1]-est.Y0[a])^2*(A==a))/(Ja[a]-1)
   }
-  
-  n1 <- tapply(data$Z, data$id, sum)
+
   n <- tapply(data$Z, data$id, length)
   
   
   sigmaw <- mean(est.sigmaj)
-  sigmab <- mean(c(sigmab1,sigmab0))- mean(1/n1-1/n)* sigmaw
+  sigmab <- mean(c(sigmab1,sigmab0))- mean(1/n0-1/n)* sigmaw
 
   return(list(sigmaw = sigmaw,sigmab = sigmab,r=sigmab/(sigmab+sigmaw), sigma.tot = sigmab+sigmaw, n.avg = mean(n)))
 

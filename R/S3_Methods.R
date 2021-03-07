@@ -105,6 +105,29 @@ print.sample <- function(x, ...){
   return(out)
 }
 
+#' @export
+#' @method print CalAPO
+
+print.CalAPO <- function(x, ...){
+  Y.hat <- as.data.frame(x$Y.hat)
+  m <- nrow(Y.hat)/2
+  colnames(Y.hat) <-  "Potential Outcome Estimates"
+  rownames(Y.hat) <- paste(c("treated group", "control group"), rep(1:m, each = 2), "estimate")
+  
+  ADE <- as.data.frame(x$ADE.est)
+  colnames(ADE) <- "Average Direct Effect"
+  rownames(ADE) <- paste("assignment group", rep(1:m))
+  
+  ASE <- as.data.frame(x$ASE.est)
+  colnames(ASE) <- "Average Spillover Effect"
+  rownames(ASE) <- paste(c(rep("treatment group under assignments", 2), rep("control group under assignments", 2)), seq(1, m-1), seq(2, m))
+  
+  MDE <- as.data.frame(x$MDE.est)
+  colnames(MDE) <- "Marginal Direct Effect"
+  
+  return(list(Y.hat, Y.covariance = x$cov.hat, ADE, ADE.covariance = x$var.hat.ADE, ASE, ASE.covariance = x$var.hat.ASE, MDE, MDE.covariance = x$var.hat.MDE))
+}
+
 
 
 

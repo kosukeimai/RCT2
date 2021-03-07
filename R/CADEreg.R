@@ -43,9 +43,6 @@
 #' \dQuote{Causal Inference with Interference and Noncompliance in the Two-Stage Randomized Experiments}, \emph{Technical Report}. Department of Politics, Princeton
 #' University.
 #' @keywords two-stage randomized experiments
-#' 
-#' @importFrom magrittr %>%
-#' @importFrom dplyr select
 #' @export CADEreg
 
 
@@ -60,12 +57,7 @@ CADEreg=function(data, ci.level=0.95){
   cluster.id <- unique(data$id)
   n.cluster <- length(cluster.id)
   n <- tapply(data$Z, data$id, length)
-  
-  
-  data_sub <- data %>% select(.data$id, .data$A)
-  A <- data_sub[!duplicated(data_sub$id), ]
-  A <- A[order(A$id),]
-  A <- A$A
+  A <- tapply(data$A, data$id, mean)
   
   W <- rep(0, length(data$id))
   J1 <- sum(A)

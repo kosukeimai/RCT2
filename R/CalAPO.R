@@ -37,8 +37,6 @@
 #' @references Zhichao Jiang, Kosuke Imai (2020).
 #' \dQuote{Statistical Inference and Power Analysis for Direct and Spillover Effects in Two-Stage Randomized Experiments}, \emph{Technical Report}.
 #' @keywords two-stage randomized experiments
-#' @importFrom magrittr %>%
-#' @importFrom dplyr select
 #' @name CalAPO
 #' 
 #' @export CalAPO
@@ -46,18 +44,14 @@
 
 CalAPO <- function (data){
   data <- data
-  data <- data[order(data$id), ]
   ### change the format of the vectors to lists
   clusters <- unique(data$id)
   n.clusters <- length(clusters)
 
   
   # get the assignment mechanism
-  data_sub <- data %>% select(.data$id, .data$A)
-  A <- data_sub[!duplicated(data_sub$id), ]
-  A <- A[order(A$id),]
-  A <- A$A
-  A <- as.numeric(factor(A))
+  A <- tapply(data$A, data$id, mean)
+  A <- as.numeric( as.factor(A) )
   
   ### format the data
   Ja <- table(A)
@@ -69,18 +63,11 @@ CalAPO <- function (data){
   n <- tapply(data$Z, data$id, length)
   n0 <- n-n1
   
-  Y1j.hat <- rep(0,J)
-  Y0j.hat <- rep(0,J)
+  # Y1j.hat <- rep(0,J)
+  # Y0j.hat <- rep(0,J)
   
-  prod_YZ <- data$Y*data$Z
-  prod_Y1Z <- data$Y*(1-data$Z)
-  
-  for (j in 1:J){
-    id <- which(data$id == clusters[j])
-    Y1j.hat[j] <- sum(prod_YZ[id])/n1[j]
-    Y0j.hat[j] <- sum(prod_Y1Z[id])/n0[j]
-    
-  }
+  Y1j.hat <- tapply(data$Y*data$Z,data$id,sum)/n1  
+  Y0j.hat <- tapply(data$Y*(1-data$Z), data$id, sum)/n0
   
   
   ###  estimated APO   (Y(1,1),Y(0,1)...,Y(1,m),Y(0,m))
@@ -133,5 +120,9 @@ CalAPO <- function (data){
   var.hat.MDE <- t(C2)%*%hat.D%*%C2/J
   var.hat.ASE <- C3%*%hat.D%*%t(C3)/J
 
-  return(list(Y.hat=Y.hat, ADE.est = ADE, MDE.est = MDE, ASE.est = ASE, cov.hat = cov.hat, var.hat.ADE = var.hat.ADE, var.hat.MDE = var.hat.MDE, var.hat.ASE = var.hat.ASE))
+  
+  out <- list(Y.hat=Y.hat, ADE.est = ADE, MDE.est = MDE, ASE.est = ASE, cov.hat = cov.hat, var.hat.ADE = var.hat.ADE, var.hat.MDE = var.hat.MDE, var.hat.ASE = var.hat.ASE)
+  
+  class(out) <- "CalAPO"
+  return(out)
 }

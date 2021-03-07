@@ -42,8 +42,6 @@
 #' @importFrom stats qnorm
 #' @importFrom stats lm
 #' @importFrom stats pt
-#' @importFrom magrittr %>%
-#' @importFrom dplyr select
 #' 
 #' @export CADEparamreg
 
@@ -63,11 +61,8 @@ CADEparamreg<-function(data, assign.prob, ci.level=0.95){
       stop( paste0('The assignment mechanism in cluster ',i,' should be the same.'))
     }
   }
-  
-  data_sub <- data %>% select(.data$id, .data$A)
-  A <- data_sub[!duplicated(data_sub$id), ]
-  A <- A[order(A$id),]
-  A <- A$A
+
+  A <- tapply(data$A, data$id, mean)
 
   data<-data[!is.na(data$Y),]
   n <- tapply(data$Z, data$id, length)

@@ -72,7 +72,8 @@ Then, run the `CalAPO` command, which takes in the vector of treatment assignmen
 ```{r}
 data_LTFC <- data.frame(data$assigned, data$pct0, data$cdd6m, data$anonale)
 colnames(data_LTFC) <- c("Z", "A", "Y", "id")
-CalAPO(data_LTFC)
+test <- CalAPO(data_LTFC)
+print(CalAPO(data_LTFC))
 ```
 
 Similarly, we can run this on the permanent contracts.
@@ -101,7 +102,6 @@ Then, call the `calpara` command to calculate the within-class and between class
 # calculate variances for permanent contract
 var.perm <- calpara(data_perm)
 
-
 # calculate variances for long term fixed contract
 var.LTFC <- calpara(data_LTFC)
 ```
@@ -112,6 +112,7 @@ The elements of the output of `calpara` can be accessed as below. For example, t
 ```{r}
 sigma.perm <- var.perm$sigma.tot
 sigma.LTFC <- var.LTFC$sigma.tot
+print(sigma.perm)
 ```
 
 
