@@ -42,7 +42,6 @@
 calpara <- function(data){
   data <- data
   clusters <- unique(data$id)
-  # data <- data[order(data$id), ]
   # number of clusters
   n.clusters <- length(clusters)
   
@@ -60,15 +59,12 @@ calpara <- function(data){
   
   est.Yj[,1] <- tapply((1-data$Z)*data$Y, data$id, sum)/n1
   est.Yj[,2] <- tapply(data$Z*data$Y, data$id, sum)/n0
-
   
-  for (j in 1:n.clusters){
-    index <- which(data$id == clusters[j])
-    n1.sub <- sum(data$Z[index])
-    n0.sub <- sum(1-data$Z[index])
-    est.sigmaj[j,2] <- sum( (data$Y[index]-est.Yj[j,2])^2*data$Z[index])/(n1.sub-1)
-    est.sigmaj[j,1] <- sum( (data$Y[index]-est.Yj[j,1])^2*(1-data$Z[index]))/(n0.sub-1)
-  }
+  cluster.length <- tapply(data$Y, data$id, length)
+  est.Yj1.rep <- rep(est.Yj[,1], times = cluster.length)
+  est.Yj2.rep <- rep(est.Yj[,2], times = cluster.length)
+  est.sigmaj[,2] <- tapply( (data$Y-est.Yj2.rep)^2*data$Z, data$id, sum)/(n0-1)
+  est.sigmaj[,1] <- tapply( (data$Y-est.Yj1.rep)^2*(1-data$Z), data$id, sum)/(n1-1)
   
   Ja <- table(A)
   
@@ -77,13 +73,18 @@ calpara <- function(data){
   est.Y1 <-  rep(-1,uniqueA)
   est.Y0 <-  rep(-1,uniqueA)
   
-  for ( a in 1:uniqueA ){
-    est.Y1[a] <- sum(est.Yj[,2]*(A==a))/Ja[a]
-    sigmab1[a] <-     sum((est.Yj[,2]-est.Y1[a])^2*(A==a))/(Ja[a]-1)
-    est.Y0[a] <- sum(est.Yj[,1]*(A==a))/Ja[a]
-    sigmab0[a] <-     sum((est.Yj[,1]-est.Y0[a])^2*(A==a))/(Ja[a]-1)
-  }
-
+  Yj2 <- data.frame(cbind(est.Yj[,2], A))
+  Yj2 <- Yj2[order(Yj2$A), ]
+  Yj1 <- data.frame(cbind(est.Yj[,1], A))
+  Yj1 <- Yj1[order(Yj1$A), ]
+  est.Y1 <- tapply(Yj2$V1, Yj2$A, sum)/Ja
+  est.Y0 <- tapply(Yj1$V1, Yj1$A, sum)/Ja
+  
+  A.count <- table(A)
+  est.Y1.rep <- rep(est.Y1, times = A.count)
+  est.Y0.rep <- rep(est.Y0, times = A.count)
+  sigmab1 <- tapply( (Yj2$V1-est.Y1.rep)^2, Yj2$A, sum)/(Ja-1)
+  sigmab0 <- tapply( (Yj1$V1-est.Y0.rep)^2, Yj1$A, sum)/(Ja-1)
   n <- tapply(data$Z, data$id, length)
   
   
