@@ -58,6 +58,7 @@
 
 
 CADErand<-function(data,individual=1, ci = 0.95){
+  id <- NULL
   data$id <- factor(data$id)
   data <- data[order(data$id),]
   
