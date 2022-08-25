@@ -6,7 +6,7 @@ Authors@R: c(person("Karissa", "Huang", email = "krhuang@berkeley.edu", role = c
 	     person("Zhichao", "Jiang", email = "zhichaojiang@umass.edu", role = c("aut")), 
 	     person("Kosuke", "Imai", email = "imai@harvard.edu", role = c("aut", "cre"))
              )
-Maintainer: Kosuke Imai <krhuang@college.harvard.edu>
+Maintainer: Kosuke Imai <imai@harvard.edu>
 Depends: R (>= 3.1.0)
 Description: Provides various statistical methods for designing and analyzing two-stage randomized controlled 
 	trials using the methods developed by Imai, Jiang, and Malani <doi: 10.1080/01621459.2020.1775612> and 
