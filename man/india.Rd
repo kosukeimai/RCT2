@@ -17,7 +17,7 @@ A data frame with columns:
 }
 }
 \source{
-\url{https://doi.org/10.7910/DVN/N7D9LS}
+\doi{10.7910/DVN/N7D9LS}
 }
 \usage{
 data(india)

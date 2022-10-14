@@ -1,6 +1,6 @@
 Package: RCT2
 Version: 0.0.1
-Date: 2022-08-25
+Date: 2022-10-14
 Title: R Package for Designing and Analyzing Randomized Experiments
 Authors@R: c(person("Karissa", "Huang", email = "krhuang@berkeley.edu", role = c("aut")), 
 	     person("Zhichao", "Jiang", email = "zhichaojiang@umass.edu", role = c("aut")), 
@@ -15,7 +15,7 @@ Description: Provides various statistical methods for designing and analyzing tw
 License: MIT + file LICENSE
 URL: https://github.com/kosukeimai/RCT2
 BugReports: https://github.com/kosukeimai/RCT2/issues
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Suggests: 
     testthat,
     knitr,

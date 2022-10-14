@@ -1,6 +1,6 @@
 #' Replication Data for: Causal Inference with Interference and Noncompliance in Two-Stage Randomized Experiments.
 #'
-#' @source \url{https://doi.org/10.7910/DVN/N7D9LS}
+#' @source \doi{10.7910/DVN/N7D9LS}
 #' @usage data(india)
 #' @format A data frame with columns:
 #' \describe{
