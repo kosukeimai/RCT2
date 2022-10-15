@@ -51,22 +51,17 @@ There are three functions in this package:
 ## Functions
 Before we begin, lets load the library and our example data set into R.
 
-```{r, include=FALSE}
-devtools::load_all(".")
-```
-
-
 ```{r}
 library(RCT2)
-data <- RCT2::india
-data$id <- factor(data$id)
+data(india)
+india$id <- factor(india$id)
 ```
 
 
 ### CADErand
 To run the CADErand command, simply type in the following:
 ```{r}
-rand <- CADErand(data, 0.95) 
+rand <- CADErand(india, 0.95) 
 print(rand)
 ```
 
@@ -80,7 +75,7 @@ allows you to access just the `CADE` estimates.
 ### CADEreg
 In order to analyze our data using a regression based method, we use the CADEreg function.
 ```{r}
-reg <- CADEreg(data, ci.level = 0.90)
+reg <- CADEreg(india, ci.level = 0.90)
 print(reg)
 ```
 
@@ -93,7 +88,7 @@ reg$CADE1
 ### CADEparamreg
 CADEparamreg offers a regression-based method for the computing the ITT effects and the average direct effects and spillover effects.
 ```{r}
-paramreg <- CADEparamreg(data, assign.prob = 0.8, ci.level = 0.95)
+paramreg <- CADEparamreg(india, assign.prob = 0.8, ci.level = 0.95)
 print(paramreg)
 print(paramreg)[[1]]
 ```

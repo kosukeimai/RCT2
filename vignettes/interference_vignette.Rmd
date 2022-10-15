@@ -51,14 +51,9 @@ The relevant functions for this analysis are the following:
 
 ## Functions
 First, import the RCT2 library and load the relevant data set.
-```{r, include=FALSE}
-devtools::load_all(".")
-```
-
-
 ```{r}
 library(RCT2)
-data <- RCT2::jd
+data(jd)
 ```
 
 
@@ -70,7 +65,7 @@ In order to calculate a list of point estimates and variances for an effect of i
 Then, run the `CalAPO` command, which takes in the vector of treatment assignments, the assignment mechanism vector, and the vector of outcomes for the variable of interest which is `Y.LTFC` in this case. We see that the estimated average potential outcome for long-term fixed contracts is given by `Y.hat`. As stated in the paper, we also have the results for the estimated direct effects under the three treatment mechanisms (`ADE.est`), the estimated marginal direct effect (`MDE.est`), and the estimated spillover effects (`ASE.est`). We also have the estimated covariance matrices for the average potential outcomes, the estimated direct effect, estimated marginal effect, and estimated spillover effects.
 
 ```{r}
-data_LTFC <- data.frame(data$assigned, data$pct0, data$cdd6m, data$anonale)
+data_LTFC <- data.frame(jd$assigned, jd$pct0, jd$cdd6m, jd$anonale)
 colnames(data_LTFC) <- c("Z", "A", "Y", "id")
 test <- CalAPO(data_LTFC)
 print(CalAPO(data_LTFC))
@@ -79,7 +74,7 @@ print(CalAPO(data_LTFC))
 Similarly, we can run this on the permanent contracts.
 
 ```{r}
-data_perm <- data.frame(data$assigned, data$pct0, data$cdi, data$anonale)
+data_perm <- data.frame(jd$assigned, jd$pct0, jd$cdi, jd$anonale)
 colnames(data_perm) <- c("Z", "A", "Y", "id")
 CalAPO(data_perm)
 ```

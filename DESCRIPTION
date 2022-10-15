@@ -25,5 +25,4 @@ Imports:
     sandwich,
     AER,
     stats,
-    devtools,
-    quadprog, rlang
+    quadprog
