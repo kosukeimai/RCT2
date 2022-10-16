@@ -1,7 +1,7 @@
 Package: RCT2
 Version: 0.0.1
-Date: 2022-10-14
-Title: R Package for Designing and Analyzing Randomized Experiments
+Date: 2022-10-16
+Title: R Package for Designing and Analyzing Two-stage Randomized Experiments
 Authors@R: c(person("Karissa", "Huang", email = "krhuang@berkeley.edu", role = c("aut")), 
 	     person("Zhichao", "Jiang", email = "zhichaojiang@umass.edu", role = c("aut")), 
 	     person("Kosuke", "Imai", email = "imai@harvard.edu", role = c("aut", "cre"))
@@ -12,7 +12,7 @@ Description: Provides various statistical methods for designing and analyzing tw
 	trials using the methods developed by Imai, Jiang, and Malani <doi: 10.1080/01621459.2020.1775612> and 
 	<doi: 10.48550/arXiv.2011.07677>.  The package enables the estimation of direct and spillover effects, 
 	conduct hypotheses tests, and conduct sample size calculation for two-stage randomized controlled trials.  
-License: MIT + file LICENSE
+License: GPL (>= 2)
 URL: https://github.com/kosukeimai/RCT2
 BugReports: https://github.com/kosukeimai/RCT2/issues
 RoxygenNote: 7.1.2
