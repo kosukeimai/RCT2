@@ -1,7 +1,7 @@
 Package: RCT2
 Version: 0.0.1
 Date: 2022-10-16
-Title: R Package for Designing and Analyzing Two-stage Randomized Experiments
+Title: Designing and Analyzing Two-stage Randomized Experiments
 Authors@R: c(person("Karissa", "Huang", email = "krhuang@berkeley.edu", role = c("aut")), 
 	     person("Zhichao", "Jiang", email = "zhichaojiang@umass.edu", role = c("aut")), 
 	     person("Kosuke", "Imai", email = "imai@harvard.edu", role = c("aut", "cre"))
