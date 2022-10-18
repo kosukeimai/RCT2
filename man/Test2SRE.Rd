@@ -27,6 +27,7 @@ references.
 \examples{
 data(jd)
 data_LTFC <- data.frame(jd$assigned, jd$pct0, jd$cdd6m, jd$anonale)
+colnames(data_LTFC) <- c("Z", "A", "Y", "id")
 Test2SRE(data_LTFC, effect="MDE", alpha=0.05)
 
 }

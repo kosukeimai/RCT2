@@ -24,6 +24,7 @@ references.
 \examples{
 data(jd)
 data_LTFC <- data.frame(jd$assigned, jd$pct0, jd$cdd6m, jd$anonale)
+colnames(data_LTFC) <- c("Z", "A", "Y", "id")
 var.LTFC <- calpara(data_LTFC)
 
 }
