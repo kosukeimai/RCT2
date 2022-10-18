@@ -43,6 +43,12 @@
 #'\item{rci.DED}{ The left endpoint for the confidence intervals for the DED from each assignment mechanism. }
 #'\item{lci.SED}{ The left endpoint for the confidence intervals for the SED from each pairwise groups of assignment mechanism. }
 #'\item{rci.SED}{ The left endpoint for the confidence intervals for the SED from each pairwise groups of assignment mechanism. }
+#' 
+#' @examples 
+#' data(india)
+#' india$id <- factor(india$id)
+#' CADErand(india, 0.95) 
+#' 
 #' @author Kosuke Imai, Department of Statistics, Harvard University
 #' \email{imai@harvard.edu}, \url{https://imai.fas.harvard.edu/};
 #' Zhichao Jiang, School of Public Health and Health Sciences, University of Massachusetts Amherst

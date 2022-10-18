@@ -33,6 +33,12 @@
 #' \item{var0.ind}{ The  individual-robust variance of CADE(0).    } 
 #' \item{var1.reg}{ The  proposed variance of CADE(1).    } 
 #' \item{var0.reg}{ The  proposed variance of CADE(0).    } 
+#' 
+#' @examples 
+#' data(india)
+#' india$id <- factor(india$id)
+#' CADEreg(india, ci.level = 0.90)
+#' 
 #' @author Kosuke Imai, Department of Statistics, Harvard University
 #' \email{imai@harvard.edu}, \url{https://imai.fas.harvard.edu/};
 #' Zhichao Jiang, School of Public Health and Health Sciences, University of Massachusetts Amherst

@@ -27,6 +27,14 @@ This function calculates the estimated average potential outcomes Y(z,a), point 
 For the details of the method implemented by this function, see the
 references.
 }
+\examples{
+data(jd)
+data_LTFC <- data.frame(jd$assigned, jd$pct0, jd$cdd6m, jd$anonale)
+colnames(data_LTFC) <- c("Z", "A", "Y", "id")
+test <- CalAPO(data_LTFC)
+print(CalAPO(data_LTFC))
+
+}
 \references{
 Zhichao Jiang, Kosuke Imai (2020).
 \dQuote{Statistical Inference and Power Analysis for Direct and Spillover Effects in Two-Stage Randomized Experiments}, \emph{Technical Report}.

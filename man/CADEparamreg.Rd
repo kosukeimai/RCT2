@@ -24,6 +24,10 @@ A list of class \code{CADEparamreg} which contains the following items:
 \item{IV.DE.CI}{ Confidence interval of direct effect under IV regresion. }
 \item{ITT.tstat}{ t-stats from ITT regression. }\item{IV.tstat}{ t-stats from IV regression. }
 \item{ITT.pvals}{ p-values from ITT regression. }\item{IV.pvals}{ p-values from IV regression. }
+
+data(india)
+india$id <- factor(india$id)
+CADEreg(india, ci.level = 0.90)
 }
 \description{
 This function computes the point estimates and variance estimates of the direct effect and spillover effect for ITT and CADE/CASE

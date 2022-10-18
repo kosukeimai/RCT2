@@ -37,6 +37,12 @@ This function computes the point estimates of the complier average direct effect
 For the details of the method implemented by this function, see the
 references.
 }
+\examples{
+data(india)
+india$id <- factor(india$id)
+CADEreg(india, ci.level = 0.90)
+
+}
 \references{
 Kosuke Imai, Zhichao Jiang and Anup Malani (2018).
 \dQuote{Causal Inference with Interference and Noncompliance in the Two-Stage Randomized Experiments}, \emph{Technical Report}. Department of Politics, Princeton

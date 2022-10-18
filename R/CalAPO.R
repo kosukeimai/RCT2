@@ -27,6 +27,12 @@
 #' \item{var.hat.MDE}{ Estimated variance of the MDE. }
 #' \item{var.hat.ASE}{ Estimated variance of the ASE. }
 #' 
+#' @examples 
+#' data(jd)
+#' data_LTFC <- data.frame(jd$assigned, jd$pct0, jd$cdd6m, jd$anonale)
+#' colnames(data_LTFC) <- c("Z", "A", "Y", "id")
+#' test <- CalAPO(data_LTFC)
+#' print(CalAPO(data_LTFC))
 #' 
 #' @author Kosuke Imai, Department of Statistics, Harvard University
 #' \email{imai@harvard.edu}, \url{https://imai.fas.harvard.edu/};

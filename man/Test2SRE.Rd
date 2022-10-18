@@ -24,6 +24,12 @@ This function tests the null hypotheses of no direct effect, no marginal direct 
 For the details of the method implemented by this function, see the
 references.
 }
+\examples{
+data(jd)
+data_LTFC <- data.frame(jd$assigned, jd$pct0, jd$cdd6m, jd$anonale)
+Test2SRE(data_LTFC, effect="MDE", alpha=0.05)
+
+}
 \references{
 Zhichao Jiang, Kosuke Imai (2020).
 \dQuote{Statistical Inference and Power Analysis for Direct and Spillover Effects in Two-Stage Randomized Experiments}, \emph{Technical Report}.

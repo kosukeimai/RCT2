@@ -20,6 +20,10 @@
 #' \item{sigma.tot}{ The total variance of the potential outcomes. }
 #' \item{n.avg}{ The mean of the number of treated observations by cluster. }
 #' 
+#' @examples 
+#' data(jd)
+#' data_LTFC <- data.frame(jd$assigned, jd$pct0, jd$cdd6m, jd$anonale)
+#' var.LTFC <- calpara(data_LTFC)
 #' 
 #' @author Kosuke Imai, Department of Statistics, Harvard University
 #' \email{imai@harvard.edu}, \url{https://imai.fas.harvard.edu/};

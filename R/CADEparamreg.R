@@ -29,6 +29,11 @@
 #' \item{ITT.tstat}{ t-stats from ITT regression. }\item{IV.tstat}{ t-stats from IV regression. }
 #' \item{ITT.pvals}{ p-values from ITT regression. }\item{IV.pvals}{ p-values from IV regression. }
 #' 
+#' data(india)
+#' india$id <- factor(india$id)
+#' CADEreg(india, ci.level = 0.90)
+#' 
+#' 
 #' @author Kosuke Imai, Department of Statistics, Harvard University
 #' \email{imai@harvard.edu}, \url{https://imai.fas.harvard.edu/};
 #' Zhichao Jiang, School of Public Health and Health Sciences, University of Massachusetts Amherst

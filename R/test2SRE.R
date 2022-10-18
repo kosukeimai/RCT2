@@ -20,8 +20,11 @@
 #' @return A list of class \code{Test2SRE} which contains the following item:
 #' \item{rej}{ Rejection region for test conducted. }
 #'
-#' 
-#' 
+#' @examples 
+#' data(jd)
+#' data_LTFC <- data.frame(jd$assigned, jd$pct0, jd$cdd6m, jd$anonale)
+#' Test2SRE(data_LTFC, effect="MDE", alpha=0.05)
+#'
 #' @author Kosuke Imai, Department of Statistics, Harvard University
 #' \email{imai@harvard.edu}, \url{https://imai.fas.harvard.edu/};
 #' Zhichao Jiang, School of Public Health and Health Sciences, University of Massachusetts Amherst

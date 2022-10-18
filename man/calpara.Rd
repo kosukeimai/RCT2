@@ -21,6 +21,12 @@ A list of class \code{calpara} which contains the following item:
 This function calculates the parameters needed for the method to calculate sample size
 references.
 }
+\examples{
+data(jd)
+data_LTFC <- data.frame(jd$assigned, jd$pct0, jd$cdd6m, jd$anonale)
+var.LTFC <- calpara(data_LTFC)
+
+}
 \references{
 Zhichao Jiang, Kosuke Imai (2020).
 \dQuote{Statistical Inference and Power Analysis for Direct and Spillover Effects in Two-Stage Randomized Experiments}, \emph{Technical Report}.
