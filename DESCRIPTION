@@ -9,8 +9,8 @@ Authors@R: c(person("Karissa", "Huang", email = "krhuang@berkeley.edu", role = c
 Maintainer: Kosuke Imai <imai@harvard.edu>
 Depends: R (>= 3.1.0)
 Description: Provides various statistical methods for designing and analyzing two-stage randomized controlled 
-	trials using the methods developed by Imai, Jiang, and Malani <doi: 10.1080/01621459.2020.1775612> and 
-	<doi: 10.48550/arXiv.2011.07677>.  The package enables the estimation of direct and spillover effects, 
+	trials using the methods developed by Imai, Jiang, and Malani (2021) <doi:10.1080/01621459.2020.1775612> and 
+	(2022+) <doi:10.48550/arXiv.2011.07677>.  The package enables the estimation of direct and spillover effects, 
 	conduct hypotheses tests, and conduct sample size calculation for two-stage randomized controlled trials.  
 License: GPL (>= 2)
 URL: https://github.com/kosukeimai/RCT2
